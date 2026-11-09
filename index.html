@@ -1,0 +1,1554 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Yea Doc Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Montserrat:wght@600;700&family=Montserrat+Subrayada&display=swap">
+<style>
+/* Layout: prototype switcher on top; Website = sidebar + long-scroll marketing page; App = phone frame with five tabs. Single dark look, by brand choice. */
+:root {
+  color-scheme: dark;
+  --bg: #050507;
+  --surface: #111114;
+  --surface-2: #19191f;
+  --line: #2a2a34;
+  --fg: #f5f6fa;
+  --muted: #a4a7b6;
+  --cyan: #06b6d4;
+  --violet: #8b5cf6;
+  --violet-soft: #c4b0ff;
+  --urgent: #f87171;
+  --ok: #34d399;
+  --ink-on-cyan: #031418;
+  --grad: linear-gradient(180deg, #06b6d4 0%, #8b5cf6 100%);
+  --grad-up: linear-gradient(0deg, #06b6d4 0%, #8b5cf6 100%);
+  --display: "Inter", "Segoe UI", system-ui, sans-serif;
+  --body: "Inter", "Segoe UI", system-ui, sans-serif;
+  --logo: "Montserrat", "Segoe UI", system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { height: 100%; }
+body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 16px; line-height: 1.5; }
+h1, h2, h3, h4 { font-family: var(--display); margin: 0; text-wrap: balance; line-height: 1.15; }
+p { margin: 0; }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+a { color: var(--cyan); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.logo { font-family: var(--logo); font-weight: 700; letter-spacing: .04em; text-decoration: underline; text-underline-offset: 5px; text-decoration-thickness: 2px; }
+.grad-text { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.icon { width: 24px; height: 24px; flex: none; }
+
+/* Prototype bar */
+.protobar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 50; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding-block: 10px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); background: #0b0b0f; border-bottom: 1px solid var(--line); }
+.protobar .tag { font-size: 12px; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+.seg { display: inline-flex; background: var(--surface-2); border: 1px solid var(--line); border-radius: 999px; padding: 3px; }
+.seg button { border: 0; background: none; padding: 6px 16px; border-radius: 999px; font-size: 14px; font-weight: 500; color: var(--muted); }
+.seg button[aria-pressed="true"] { background: #000; color: var(--cyan); box-shadow: inset 0 0 0 1px var(--line); }
+
+/* Buttons */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 0; border-radius: 8px; padding: 12px 22px; font-weight: 700; font-size: 16px; text-decoration: none; }
+.btn-primary { background: var(--cyan); color: var(--ink-on-cyan); }
+.btn-primary:hover { filter: brightness(1.1); }
+.btn-ghost { background: transparent; color: var(--violet-soft); box-shadow: inset 0 0 0 1.5px var(--violet); }
+.btn-ghost:hover { background: rgba(139, 92, 246, .12); }
+.btn-block { width: 100%; }
+.btn-sm { padding: 8px 14px; font-size: 14px; }
+.btn[disabled] { opacity: .55; cursor: default; filter: none; }
+
+/* Pills and badges */
+.pill { position: relative; display: inline-flex; align-items: center; color: var(--cyan); border-radius: 999px; padding: 2px 10px; font-size: 12px; white-space: nowrap; }
+.pill::before { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px; background: var(--grad); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
+.badge-urgent { background: var(--urgent); color: #3a0606; font-size: 12px; font-weight: 700; border-radius: 4px; padding: 2px 8px; }
+.badge-ok { color: var(--ok); font-size: 12px; font-weight: 500; }
+.badge-warn { color: #fbbf24; font-size: 12px; font-weight: 500; }
+.chip { border: 0; background: var(--surface-2); color: var(--fg); border-radius: 999px; padding: 6px 12px; font-size: 14px; display: inline-flex; align-items: center; gap: 6px; box-shadow: inset 0 0 0 1px var(--line); }
+.chip[aria-pressed="true"] { background: var(--cyan); color: var(--ink-on-cyan); font-weight: 700; box-shadow: none; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.tierbadge { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; }
+.coin { width: 28px; height: 28px; border-radius: 50%; background: #000; display: inline-grid; place-items: center; flex: none; }
+.coin .icon { width: 18px; height: 18px; }
+
+/* ---------- WEBSITE (built 1:1 from the Figma marketing frame, 1956px wide, scaled to fit) ---------- */
+#view-site { background: #000; overflow-x: hidden; }
+.w-canvas { width: 1956px; display: flex; margin: 0 auto; zoom: var(--z, 1); color: #fff; font-family: "Inter", "Segoe UI", system-ui, sans-serif; }
+:where(.w-canvas) p { margin: 0; }
+.w-canvas h1, .w-canvas h2, .w-canvas h3, .w-canvas h4 { text-wrap: wrap; }
+.w-side { width: 321px; flex: none; background: #121212; }
+.w-side-in { position: sticky; top: 0; padding: 23.46px 24px 0 23px; display: flex; flex-direction: column; }
+.w-logobox { width: 273px; height: 59.629px; background: #000; border-radius: 8px; display: flex; align-items: center; justify-content: center; text-decoration: none; color: #fff; }
+.w-logo { font-family: "Montserrat Subrayada", "Montserrat", sans-serif; font-size: 24px; line-height: normal; }
+.w-nav { display: flex; flex-direction: column; gap: 15.64px; margin-top: 23.46px; margin-left: 1px; }
+.w-nav a { height: 39.102px; width: 273px; display: flex; align-items: center; padding: 16px; border-radius: 16px; color: #fff; text-decoration: none; font-size: 16px; line-height: 21px; letter-spacing: .16px; }
+.w-nav a:hover { background: #1d1d22; }
+.w-nav a.cur { font-weight: 700; }
+.w-main { width: 1635px; flex: none; display: flex; flex-direction: column; align-items: center; }
+.w-h1 { font-weight: 700; font-size: 64px; letter-spacing: .64px; line-height: normal; text-align: center; }
+.w-sub { font-size: 24px; letter-spacing: .24px; line-height: normal; text-align: center; }
+.w-fill { background: linear-gradient(180deg, #121212 0%, rgba(0, 0, 0, .3) 100%); }
+.w-gb { border: 3px solid transparent; background: linear-gradient(#121212, #121212) padding-box, linear-gradient(180deg, #06b6d4, #8b5cf6) border-box; }
+.w-btn { display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; font-family: "Inter", sans-serif; font-weight: 700; font-size: 18px; line-height: normal; cursor: pointer; border: 0; }
+.w-btn-cyan { background: #06b6d4; color: #000; }
+.w-btn-out { background: transparent; border: 1.5px solid #8b5cf6; color: #bf99ff; }
+.w-btn:hover { filter: brightness(1.12); }
+
+/* hero */
+.w-hero { width: 1635px; height: 989.9px; padding-top: 40px; display: flex; flex-direction: column; align-items: center; gap: 64px; }
+.w-herogrp { position: relative; width: 1121.66px; height: 709.89px; flex: none; }
+.w-herocard { position: absolute; left: 0; top: 167.98px; width: 855.786px; height: 371.869px; border-radius: 40px; }
+.w-herotext { position: absolute; left: 32.81px; top: 213.91px; width: 677px; display: flex; flex-direction: column; gap: 24px; align-items: flex-start; }
+.w-herotext h1 { margin: 0; font-size: 64px; font-weight: 700; letter-spacing: .64px; line-height: normal; height: 116px; width: 622px; display: flex; flex-direction: column; justify-content: center; }
+.w-herotext h1 span, .w-persp-h span { white-space: nowrap; }
+.w-herotext p { font-size: 24px; letter-spacing: .24px; line-height: normal; }
+.w-herobtns { display: flex; gap: 16px; }
+.w-herobtns .w-btn { height: 52px; width: 214px; padding: 8px; }
+.w-herobtns-top { gap: 24px; }
+.w-herobtns-top .w-btn { font-family: "Inter", sans-serif; font-size: 18px; line-height: 21px; letter-spacing: .18px; }
+.w-herobtns-top .w-btn-find { width: 197px; background: transparent; border: 2px solid #c084fc; color: #c084fc; }
+.w-tiles { position: absolute; left: 757.66px; top: 0; width: 364px; height: 709.89px; }
+.w-tile { position: absolute; border-radius: 16px; overflow: hidden; }
+.w-tile .ph { position: absolute; inset: 0; border-radius: 16px; border: 3px solid transparent; background: radial-gradient(120% 90% at 30% 10%, #4a3d6b 0%, #211a33 55%, #0e0c14 100%) padding-box, linear-gradient(180deg, #06b6d4, #8b5cf6) border-box; display: grid; place-items: center; }
+.w-tile .ph svg { width: 44%; height: auto; opacity: .7; }
+.w-tile img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; max-width: none; }
+.w-props { display: flex; gap: 64px; align-items: flex-start; }
+.w-prop { width: 428px; padding: 16px; border-radius: 8px; display: flex; gap: 16px; align-items: flex-start; }
+.w-prop > div { flex: 1; min-width: 0; }
+.w-prop h3 { margin: 0 0 8px; font-size: 24px; font-weight: 700; letter-spacing: .24px; line-height: normal; }
+.w-prop p { font-family: "Inter", sans-serif; font-size: 16px; letter-spacing: .16px; line-height: normal; }
+
+/* perspectives */
+.w-persp-h { margin-top: 64px; width: 1555px; height: 116px; display: flex; flex-direction: column; justify-content: center; margin-bottom: 0; }
+.w-persp-sub { margin-top: 24px; width: 677px; height: 58px; }
+.w-toggle { margin-top: 54px; position: relative; width: 376px; height: 35px; background: #444; border-radius: 40px; flex: none; }
+.w-toggle button { position: absolute; top: 2.75px; bottom: 2.75px; border: 0; border-radius: 40px; background: transparent; color: #a1a1aa; font: 700 16px/21px "Inter", sans-serif; letter-spacing: .16px; padding: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.w-toggle button:first-child { left: 1.18%; right: 51.18%; }
+.w-toggle button:last-child { left: 48.82%; right: 1.18%; }
+.w-toggle button[aria-pressed="true"] { background: #000; color: #06b6d4; }
+.w-level { margin-top: 40px; width: 925px; min-height: 308px; padding: 24px; border-radius: 16px; display: flex; gap: 40px; align-items: center; }
+.w-level-text { width: 615px; flex: none; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+.w-level-text h3 { margin: 0; font-size: 32px; font-weight: 700; letter-spacing: .32px; line-height: 21px; }
+.w-level-text p { font-family: "Inter", sans-serif; font-size: 20px; letter-spacing: .2px; line-height: normal; }
+.w-levellist { border-radius: 16px; padding: 21px; display: flex; flex-direction: column; gap: 16px; flex: none; min-width: 222px; }
+.w-levellist a { display: flex; align-items: center; gap: 8px; color: #fff; text-decoration: none; font-family: "Inter", sans-serif; font-size: 24px; line-height: 1.5; letter-spacing: -.528px; white-space: nowrap; }
+.w-levellist a:hover { color: #06b6d4; }
+.w-grid { margin-top: 8px; width: 1558px; height: 353px; border-radius: 16px; display: grid; grid-template-columns: 767px 767px; grid-template-rows: 183px auto; column-gap: 24px; }
+.w-cell { padding: 32px; display: flex; gap: 16px; align-items: center; scroll-margin-top: 80px; }
+.w-cell:first-child { align-items: flex-start; }
+.w-cell h4 { margin: 0; font-size: 24px; font-weight: 700; letter-spacing: .24px; line-height: 21px; }
+.w-cell p { padding-top: 6px; margin-top: 8px; font-size: 16px; letter-spacing: .16px; line-height: 21px; }
+.w-cell > div:last-child { flex: 1; min-width: 0; }
+.w-coin { position: relative; flex: none; border-radius: 50%; background: #000; display: grid; place-items: center; }
+.w-bars { position: relative; flex: none; }
+.w-bars i { position: absolute; background: linear-gradient(180deg, #06b6d4, #8b5cf6); }
+.w-bars b { position: absolute; left: 0; right: 0; border-radius: 50%; background: #000; aspect-ratio: 1; }
+
+/* how it works */
+.w-how { margin-top: 64px; width: 1555px; display: flex; flex-direction: column; align-items: center; gap: 32px; }
+.w-cols { display: flex; gap: 32px; align-items: flex-start; }
+.w-head { display: flex; flex-direction: column; align-items: center; gap: 24px; }
+.w-howcard { width: 761px; padding: 32px; border-radius: 16px; display: flex; flex-direction: column; gap: 24px; }
+.w-howcard h3 { margin: 0; font-size: 32px; font-weight: 700; letter-spacing: .32px; line-height: 21px; }
+.w-steps { display: flex; flex-direction: column; gap: 24px; }
+.w-step { display: flex; gap: 24px; align-items: flex-start; }
+.w-num { width: 56px; height: 56px; border-radius: 28px; flex: none; border: 2px solid transparent; background: linear-gradient(#000, #000) padding-box, linear-gradient(0deg, #06b6d4 0%, #8b5cf6 100%) border-box; display: grid; place-items: center; font-weight: 700; font-size: 24px; }
+.w-step b { display: block; font-size: 24px; letter-spacing: .24px; line-height: 21px; margin-bottom: 8px; }
+.w-step span { display: block; color: #b3b3b3; font-size: 16px; letter-spacing: .16px; line-height: 21px; }
+
+/* panel */
+.w-panel { margin-top: 56px; width: 1555px; display: flex; flex-direction: column; align-items: center; gap: 32px; }
+.w-members, .w-promises { display: flex; gap: 32px; align-items: flex-start; }
+.w-member { width: 364px; padding: 32px; border-radius: 16px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
+.w-photo { width: 120px; height: 120px; border-radius: 50%; border: 3px solid transparent; background: linear-gradient(#000, #000) padding-box, linear-gradient(0deg, #06b6d4 0%, #8b5cf6 100%) border-box; }
+.w-member > * { line-height: normal; }
+.w-member b { font-size: 24px; }
+.w-member .role { font-family: "Inter", sans-serif; font-weight: 700; font-size: 18px; color: #bf99ff; }
+.w-member i { color: #b3b3b3; font-size: 16px; }
+.w-promise { width: 497px; padding: 24px; border-radius: 8px; display: flex; flex-direction: column; gap: 8px; }
+.w-promise b { font-size: 24px; letter-spacing: .24px; line-height: 21px; }
+.w-promise span { font-size: 16px; letter-spacing: .16px; line-height: 21px; }
+
+/* membership */
+.w-mem { margin-top: 31px; width: 1555px; display: flex; flex-direction: column; align-items: center; gap: 32px; }
+.w-plans { display: flex; gap: 32px; }
+.w-plan { width: 460px; height: 520px; padding: 32px; border-radius: 16px; display: flex; flex-direction: column; gap: 24px; border: 0; }
+.w-plan.vip { border: 3px solid transparent; background: linear-gradient(180deg, #121212 0%, #050505 100%) padding-box, linear-gradient(0deg, #06b6d4 0%, #8b5cf6 100%) border-box; }
+.w-plan-h { display: flex; flex-direction: column; gap: 8px; }
+.w-plan-h b { font-size: 24px; letter-spacing: .24px; line-height: 21px; }
+.w-price { display: flex; gap: 6px; align-items: baseline; }
+.w-price strong { font-size: 48px; line-height: normal; }
+.w-price small { font-size: 16px; color: #b3b3b3; letter-spacing: .16px; line-height: 21px; }
+.w-plan-h em { color: #b3b3b3; font-size: 18px; letter-spacing: .18px; line-height: 21px; }
+.w-divider { height: 1px; background: #444; flex: none; }
+.w-benefits { display: flex; flex-direction: column; gap: 16px; list-style: none; padding: 0; margin: 0; }
+.w-benefits li { display: flex; gap: 12px; font-size: 16px; letter-spacing: .16px; line-height: 21px; }
+.w-benefits .w-chk { width: 20px; height: 20px; flex: none; display: block; }
+.w-benefits .w-chk svg { display: block; }
+.w-vpic { flex: none; display: block; line-height: 0; }
+.w-ic { position: relative; flex: none; display: block; line-height: 0; }
+.w-ic svg { display: block; }
+.w-plan .w-btn { margin-top: auto; width: 100%; padding: 14px 0; }
+.w-plan .w-btn-out { border-color: #c084fc; color: #c084fc; }
+.w-fine { font-style: italic; color: #b3b3b3; font-size: 16px; line-height: normal; }
+.w-fine2 { font-family: "Inter", sans-serif; font-weight: 700; font-size: 18px; line-height: normal; }
+
+/* faq */
+.w-faq-h { margin-top: 64px; width: 1555px; height: 76px; }
+.w-tabs { margin-top: 24px; padding: 0 16px; display: flex; gap: 138px; }
+.w-tabs button { width: 100px; height: 90px; padding: 8px 0; background: none; border: 0; border-bottom: 4px solid #000; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 8px; color: #fff; font: 700 18px/21px "Inter", sans-serif; letter-spacing: .18px; cursor: pointer; }
+.w-tabs button[aria-selected="true"] { border-image: linear-gradient(0deg, #06b6d4 0, #8b5cf6 4.7px) 1; }
+.w-faqbox { margin-top: 2px; width: 992px; border: 2px solid #444; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 24px; align-items: center; }
+.w-faqbox hr { width: 940px; height: 1px; border: 0; background: #444; margin: -.5px 0; flex: none; }
+.w-q { width: 940px; }
+.w-q summary { list-style: none; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-weight: 700; font-size: 16px; letter-spacing: .16px; line-height: 21px; }
+.w-q summary::-webkit-details-marker { display: none; }
+.w-q summary svg { width: 16px; height: 16px; flex: none; transition: transform .2s; }
+.w-q:not([open]) summary svg { transform: rotate(180deg); }
+.w-q p { margin: 16px 0 0 23.02px !important; width: 916.98px; font-style: italic; font-size: 16px; letter-spacing: .16px; line-height: 21px; }
+
+/* cta + footer */
+.w-cta { margin-top: 64px; width: 1555px; padding: 64px; border-radius: 16px; display: flex; flex-direction: column; align-items: center; gap: 24px; }
+.w-cta .w-herobtns .w-btn { width: auto; height: auto; padding: 14px 32px; }
+.w-foot { margin-top: 24px; width: 1635px; background: #0d0d0d; padding: 64px 40px 48px; display: flex; flex-direction: column; gap: 40px; }
+.w-foot-top { display: flex; justify-content: space-between; align-items: flex-start; }
+.w-foot-brand { display: flex; flex-direction: column; gap: 12px; }
+.w-foot-brand .w-logo { width: 241px; }
+.w-foot-brand span, .w-foot a { color: #b3b3b3; font-size: 16px; letter-spacing: .16px; line-height: 21px; text-decoration: none; }
+.w-foot a:hover { color: #fff; }
+.w-foot-links { display: flex; gap: 80px; }
+.w-foot-links div { display: flex; flex-direction: column; gap: 14px; }
+.w-foot-links b { font-size: 16px; line-height: normal; }
+.w-foot-bot { display: flex; justify-content: space-between; color: #b3b3b3; font-size: 14px; letter-spacing: .14px; line-height: 21px; }
+.w-foot-bot span:last-child { display: flex; gap: 24px; }
+
+/* phone and small tablet: same content, stacked */
+@media (max-width: 899px) {
+  .w-canvas { zoom: 1; width: 100%; flex-direction: column; }
+  .w-side { width: 100%; }
+  .w-side-in { position: static; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 10px; padding: 12px 16px; }
+  .w-logobox { width: auto; height: auto; padding: 8px 14px; }
+  .w-nav { flex-direction: row; flex-wrap: wrap; gap: 4px; margin: 0; }
+  .w-nav a { width: auto; height: auto; padding: 6px 10px; font-size: 14px; }
+  .w-main { width: 100%; padding: 0 16px; }
+  .w-hero, .w-herogrp, .w-herocard, .w-herotext, .w-herotext h1, .w-persp-h, .w-persp-sub, .w-level, .w-level-text, .w-grid, .w-how, .w-howcard, .w-panel, .w-member, .w-promise, .w-mem, .w-plan, .w-faq-h, .w-faqbox, .w-q, .w-q p, .w-faqbox hr, .w-cta, .w-foot, .w-prop { width: 100% !important; height: auto !important; min-height: 0; }
+  .w-hero { padding-top: 24px; gap: 32px; }
+  .w-herogrp { position: static; display: flex; flex-direction: column; gap: 24px; }
+  .w-herocard { display: none; }
+  .w-herotext { position: static; padding: 24px 20px; border-radius: 24px; background: linear-gradient(180deg, #121212 0%, rgba(0, 0, 0, .3) 100%); }
+  .w-herotext h1 { font-size: 38px; display: block; }
+  .w-herotext h1 span, .w-persp-h span { white-space: normal; display: block; }
+  .w-herotext p, .w-sub { font-size: 18px; }
+  .w-h1 { font-size: 34px; }
+  .w-herobtns { flex-wrap: wrap; }
+  .w-herobtns .w-btn { width: auto; padding: 12px 20px; }
+  .w-tiles { position: relative; left: 0; zoom: .5; margin: 0 auto; }
+  .w-props, .w-cols, .w-members, .w-promises, .w-plans, .w-level, .w-foot-top, .w-foot-links { flex-direction: column; flex-wrap: wrap; gap: 20px; }
+  .w-grid { grid-template-columns: 1fr; grid-template-rows: none; }
+  .w-level-text { padding: 0; }
+  .w-level-text h3 { line-height: 1.2; font-size: 26px; }
+  .w-tabs { gap: 24px; }
+  .w-faqbox { padding: 16px; }
+  .w-q p { margin-left: 0 !important; }
+  .w-cta { padding: 32px 16px; }
+  .w-foot { margin-left: -16px; width: calc(100% + 32px) !important; padding: 40px 20px; }
+  .w-foot-bot { flex-direction: column; gap: 8px; }
+}
+
+/* ---------- APP ---------- */
+#view-app { padding-block: 24px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 32px; align-items: start; }
+.appnote { max-width: 300px; justify-self: end; display: flex; flex-direction: column; gap: 14px; color: var(--muted); font-size: 15px; padding-top: 24px; }
+.appnote h2 { color: var(--fg); font-size: 22px; }
+.appnote .seg { align-self: flex-start; }
+.appnote ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; }
+.device { width: 440px; max-width: 100%; height: min(880px, calc(100vh - 104px)); min-height: 620px; border-radius: 40px; background: #000; box-shadow: 0 0 0 10px #1b1b20, 0 0 0 11px #33333b, 0 30px 80px rgba(0, 0, 0, .6); overflow: hidden; display: flex; flex-direction: column; position: relative; }
+.apptop { display: grid; grid-template-columns: 40px 1fr 40px; align-items: center; padding: 18px 16px 10px; background: #000; }
+.apptop .logo { text-align: center; font-size: 22px; }
+.iconbtn { background: none; border: 0; padding: 6px; border-radius: 8px; display: grid; place-items: center; color: var(--fg); }
+.iconbtn:hover { background: var(--surface-2); }
+.screen { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 8px 16px 24px; display: flex; flex-direction: column; gap: 18px; scrollbar-width: thin; }
+.screen.flush { padding: 0; gap: 0; }
+.tabbar { display: grid; grid-template-columns: repeat(5, 1fr); padding: 10px 12px 14px; border-top: 1px solid #1d1d22; background: #000; }
+.tabbar button { background: none; border: 0; display: grid; place-items: center; padding: 8px 0; border-radius: 10px; color: var(--fg); }
+.tabbar button[aria-current="page"] { background: var(--cyan); color: #000; }
+.tabbar .dot { position: relative; }
+.tabbar .dot::after { content: attr(data-count); position: absolute; top: -6px; right: -10px; background: var(--urgent); color: #fff; font-size: 10px; font-weight: 700; border-radius: 999px; padding: 0 5px; line-height: 16px; }
+
+.card { background: var(--surface); border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+.card.lift { box-shadow: inset 0 0 0 1px #24242b; }
+.welcome { background: #111114; border-radius: 14px; padding: 16px; }
+.welcome h2 { font-size: 20px; margin-bottom: 6px; }
+.welcome p { color: var(--muted); }
+.row { display: flex; align-items: center; gap: 10px; }
+.between { justify-content: space-between; }
+.label { font-family: var(--display); font-weight: 700; font-size: 17px; }
+.muted { color: var(--muted); }
+.small { font-size: 13px; }
+.gtitle { font-family: var(--display); font-weight: 700; font-size: 18px; }
+.gpay { font-family: var(--display); font-weight: 800; font-size: 20px; font-variant-numeric: tabular-nums; }
+.linkbtn { background: none; border: 0; padding: 0; color: var(--violet-soft); font-weight: 700; font-size: 13px; letter-spacing: .05em; text-transform: uppercase; }
+.cardtap { cursor: pointer; }
+.cardtap:hover { box-shadow: inset 0 0 0 1px #3a3a46; }
+.recent { display: flex; align-items: center; justify-content: space-between; background: var(--surface); border-radius: 12px; padding: 12px 16px; border: 0; width: 100%; text-align: left; }
+.recent b { display: block; }
+.searchbar { display: flex; align-items: center; gap: 10px; border-radius: 999px; padding: 2px; background: var(--grad-up); }
+.searchbar > div { flex: 1; display: flex; align-items: center; gap: 10px; background: #000; border-radius: 999px; padding: 0 18px; height: 56px; }
+.searchbar input[type="text"] { flex: 1; min-width: 0; width: auto; background: none; border: 0; padding: 0; color: var(--fg); font-size: 16px; outline: none; }
+.empty { text-align: center; color: var(--muted); padding: 28px 12px; }
+
+/* map + sheet */
+.mapwrap { position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.map { position: absolute; inset: 0; background: #c9ccd2; overflow: hidden; }
+.map svg.roads { position: absolute; inset: 0; width: 100%; height: 100%; }
+.pin { position: absolute; transform: translate(-50%, -100%); display: flex; flex-direction: column; align-items: center; gap: 2px; background: none; border: 0; padding: 0; max-width: 130px; }
+.pin span { font-size: 12px; font-weight: 700; color: #1d1b2b; text-align: center; line-height: 1.15; text-shadow: 0 0 3px #fff, 0 0 3px #fff; }
+.pin svg { width: 26px; height: 32px; }
+.area { position: absolute; width: 74px; height: 74px; border-radius: 50%; background: rgba(139, 92, 246, .22); border: 1.5px solid rgba(139, 92, 246, .7); transform: translate(-50%, -50%); }
+.area b { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font-size: 12px; color: #2a1a5a; font-weight: 700; white-space: nowrap; }
+.mapsearch { position: relative; z-index: 2; padding: 10px 16px 0; }
+.filterpanel { position: relative; z-index: 3; margin: 12px 16px 0; background: #121214; border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 10px 30px rgba(0, 0, 0, .5); max-height: 64%; overflow-y: auto; }
+.filterpanel h4 { font-size: 15px; margin-bottom: 8px; }
+.toggle2 { display: grid; grid-template-columns: 1fr 1fr; background: #2a2a31; border-radius: 999px; padding: 3px; }
+.toggle2 button { border: 0; background: none; border-radius: 999px; padding: 7px; font-weight: 700; color: #8d8f9c; }
+.toggle2 button[aria-pressed="true"] { background: #000; color: var(--cyan); }
+select, input[type="text"], input[type="date"], input[type="number"], textarea { width: 100%; background: #000; color: var(--fg); border: 1px solid #303038; border-radius: 8px; padding: 10px 12px; font: inherit; }
+textarea { min-height: 80px; resize: vertical; }
+.sheet { position: relative; z-index: 2; margin-top: auto; background: #000; border-radius: 22px 22px 0 0; padding: 10px 16px 16px; max-height: 70%; display: flex; flex-direction: column; gap: 12px; transition: max-height .25s ease; }
+.sheet.collapsed { max-height: 112px; }
+.sheet .grab { align-self: center; width: 64px; height: 4px; border-radius: 4px; background: #fff; border: 0; padding: 0; }
+.sheet .list { overflow-y: auto; display: flex; flex-direction: column; gap: 14px; min-height: 0; }
+.mcard { display: grid; grid-template-columns: 76px minmax(0, 1fr) auto; gap: 4px 12px; }
+.mcard .actions { grid-column: 1 / -1; }
+.avatar { width: 76px; height: 76px; border-radius: 10px; display: grid; place-items: center; font-family: var(--display); font-weight: 800; font-size: 26px; color: #fff; position: relative; }
+.avatar::before { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 2px; background: var(--grad); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
+.avatar.round { border-radius: 50%; }
+.avatar.round::before { background: var(--grad-up); }
+.avatar img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: inherit; max-width: none; z-index: 1; }
+.avatar.lg { width: 96px; height: 96px; font-size: 32px; }
+.avatar.sm { width: 44px; height: 44px; font-size: 16px; }
+
+/* detail screens */
+.back { display: inline-flex; align-items: center; gap: 6px; background: none; border: 0; color: var(--muted); padding: 0; font-weight: 500; }
+.profilehead { background: var(--surface); border-radius: 14px; padding: 16px; margin-top: 44px; position: relative; display: flex; flex-direction: column; gap: 10px; }
+.profilehead .avatar { position: absolute; top: -48px; left: 16px; }
+.profilehead .follow { position: absolute; top: -18px; right: 12px; }
+.media { border-radius: 12px; aspect-ratio: 16 / 10; position: relative; padding: 1.5px; background: var(--grad); }
+.media > div { border-radius: 11px; height: 100%; display: grid; place-items: center; background: radial-gradient(90% 90% at 50% 0%, #4b3a7a 0%, #1c1630 60%, #0a0910 100%); }
+.media .play { width: 64px; height: 64px; border-radius: 50%; background: var(--grad); display: grid; place-items: center; }
+.progress { height: 8px; border-radius: 8px; background: #26262e; overflow: hidden; }
+.progress i { display: block; height: 100%; background: var(--grad); }
+.kv { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 8px 14px; font-size: 15px; }
+.kv dt { color: var(--muted); }
+.kv dd { margin: 0; }
+.formgrid { display: flex; flex-direction: column; gap: 14px; }
+.formgrid label { display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 500; }
+.radio { display: flex; gap: 18px; }
+.radio label { flex-direction: row; align-items: center; gap: 8px; font-weight: 400; }
+.thread { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.bubble { max-width: 80%; padding: 10px 14px; border-radius: 16px; font-size: 15px; }
+.bubble.them { background: var(--surface-2); align-self: flex-start; border-bottom-left-radius: 4px; }
+.bubble.me { background: var(--cyan); color: var(--ink-on-cyan); align-self: flex-end; border-bottom-right-radius: 4px; }
+.composer { display: flex; gap: 8px; position: sticky; bottom: 0; background: #000; padding-top: 8px; }
+.convo { display: flex; gap: 12px; align-items: center; background: none; border: 0; text-align: left; padding: 10px 0; border-bottom: 1px solid #1d1d22; width: 100%; }
+.convo .meta { min-width: 0; flex: 1; }
+.convo .meta p { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--muted); font-size: 14px; }
+.unread { width: 10px; height: 10px; border-radius: 50%; background: var(--cyan); flex: none; }
+.menu { position: absolute; inset: 0; z-index: 20; background: rgba(0, 0, 0, .55); display: flex; }
+.menu > div { width: 78%; background: #111114; padding: 24px 18px; display: flex; flex-direction: column; gap: 6px; }
+.menu button.item { background: none; border: 0; text-align: left; padding: 12px; border-radius: 8px; font-size: 16px; }
+.menu button.item:hover { background: var(--surface-2); }
+.modal { position: absolute; inset: 0; z-index: 25; background: rgba(0, 0, 0, .6); display: flex; align-items: flex-end; }
+.modal > div { width: 100%; background: #121214; border-radius: 22px 22px 0 0; padding: 20px 16px 24px; display: flex; flex-direction: column; gap: 12px; max-height: 80%; overflow-y: auto; }
+.opt { display: flex; justify-content: space-between; align-items: center; width: 100%; text-align: left; background: #000; border: 1px solid #2c2c33; border-radius: 10px; padding: 12px; }
+.opt:hover { border-color: var(--cyan); }
+.toast { position: absolute; left: 16px; right: 16px; bottom: 92px; z-index: 30; background: #f5f6fa; color: #0b0b10; border-radius: 10px; padding: 12px 16px; font-weight: 500; box-shadow: 0 10px 30px rgba(0, 0, 0, .5); }
+
+
+
+/* dropdowns: matched to Figma (Create Posting fields, Distance filter, open option list) */
+.dd { position: relative; width: 100%; }
+.dd-btn { width: 100%; height: 40px; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 0 16px; background: #000; border: 1px solid #000; border-radius: 8px; color: #fff; font: 400 16px/21px "Inter", sans-serif; letter-spacing: .16px; text-align: left; cursor: pointer; }
+.dd-btn .ph { font-style: italic; color: #838383; }
+.dd-btn svg { width: 16px; height: 16px; color: #06b6d4; flex: none; transform: rotate(90deg); transition: transform .15s; }
+.dd-btn[aria-expanded="true"] svg { transform: rotate(-90deg); }
+.dd.outline .dd-btn { height: auto; padding: 8px 16px; border-color: #fff; }
+.dd-list { position: absolute; z-index: 40; display: flex; flex-direction: column; gap: 4px; padding: 12px 8px; border: 1.5px solid transparent; border-radius: 8px; background: linear-gradient(#121212, #121212) padding-box, linear-gradient(180deg, #06b6d4, #8b5cf6) border-box; filter: drop-shadow(0 4px 2px rgba(0, 0, 0, .75)); max-height: 260px; overflow-y: auto; }
+.dd-list button { background: none; border: 0; border-radius: 6px; padding: 4px 8px; text-align: left; color: #fff; font: 400 16px/21px "Inter", sans-serif; letter-spacing: .16px; cursor: pointer; }
+.dd-list button:hover, .dd-list button:focus-visible { background: #1f1f26; outline: none; }
+.dd-list button[aria-selected="true"] { color: #06b6d4; }
+.formgrid input[type="text"], .formgrid input[type="date"], .formgrid input[type="number"], .formgrid textarea { background: #000; border: 1px solid #000; border-radius: 8px; height: 40px; padding: 0 16px; font: 400 16px/21px "Inter", sans-serif; letter-spacing: .16px; color: #fff; }
+.formgrid textarea { height: auto; min-height: 80px; padding: 10px 16px; }
+.formgrid input::placeholder, .formgrid textarea::placeholder { font-style: italic; color: #838383; }
+.filterpanel ~ .sheet { display: none; }
+
+
+
+/* sign up + questionnaires: matched to the Figma Create Account Process page */
+.su-card { background: #121212; border-radius: 32px; padding: 24px 16px; display: flex; flex-direction: column; gap: 24px; font-family: "Inter", sans-serif; }
+.su-card h2 { font: 700 24px/21px "Inter", sans-serif; letter-spacing: .24px; }
+.su-group { display: flex; flex-direction: column; gap: 16px; }
+.su-group.pad { padding: 16px 0; }
+.su-h { font: 700 18px/21px "Inter", sans-serif; letter-spacing: .18px; }
+.su-field { display: flex; flex-direction: column; gap: 8px; font: 400 16px/21px "Inter", sans-serif; letter-spacing: .16px; }
+.su-field input[type="text"], .su-field input[type="email"] { height: 40px; background: #000; border: 1px solid #000; border-radius: 8px; padding: 0 16px; color: #fff; font: 400 16px/21px "Inter", sans-serif; letter-spacing: .16px; }
+.su-toggle { position: relative; width: 100%; height: 35px; background: #444; border-radius: 64px; }
+.su-toggle button { position: absolute; top: 2.75px; bottom: 2.75px; border: 0; border-radius: 40px; background: transparent; color: #a1a1aa; font: 400 16px/21px "Inter", sans-serif; letter-spacing: .16px; }
+.su-toggle button:first-child { left: 1.18%; right: 51.18%; }
+.su-toggle button:last-child { left: 48.82%; right: 1.18%; }
+.su-toggle button[aria-pressed="true"] { background: #000; color: #06b6d4; font-weight: 700; }
+.su-err { color: #f87171; font-size: 14px; }
+.su-btn { width: 100%; border: 0; border-radius: 8px; padding: 12px; background: #06b6d4; color: #000; font: 700 16px/21px "Inter", sans-serif; letter-spacing: .16px; }
+.su-btn:hover { filter: brightness(1.1); }
+.q-page { display: flex; flex-direction: column; gap: 24px; font-family: "Inter", sans-serif; padding-bottom: 8px; }
+.q-title { font: 700 24px/21px "Inter", sans-serif; letter-spacing: .24px; margin-top: 4px; }
+.q-sec { border-left: 2px solid #06b6d4; padding: 0 8px; font: 700 18px/21px "Inter", sans-serif; letter-spacing: .18px; margin-top: 8px; }
+.q-sec:first-of-type { margin-top: 0; }
+.q-sub { font: 700 16px/21px "Inter", sans-serif; letter-spacing: .16px; }
+.q-text { font: 400 16px/21px "Inter", sans-serif; letter-spacing: .16px; }
+.q { border: 0; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 16px; }
+.q legend { padding: 0; margin-bottom: 16px; font: 400 16px/21px "Inter", sans-serif; letter-spacing: .16px; }
+.q-opts { display: flex; flex-direction: column; gap: 19px; padding-left: 16px; }
+.q-opt { display: flex; gap: 16px; align-items: flex-start; font: 400 16px/21px "Inter", sans-serif; letter-spacing: .16px; cursor: pointer; }
+.q-opt input { appearance: none; -webkit-appearance: none; width: 24px; height: 24px; flex: none; margin: -1.5px 0 0; display: grid; place-items: center; cursor: pointer; }
+.q-opt input[type="checkbox"]::before { content: ""; width: 18px; height: 18px; border: 2px solid #49454f; border-radius: 2px; box-sizing: border-box; }
+.q-opt input[type="checkbox"]:checked::before { background: #06b6d4 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M4.5 10.5 8.5 14.5 15.5 6' fill='none' stroke='%23000' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/14px no-repeat; border-color: #06b6d4; }
+.q-opt input[type="radio"]::before { content: ""; width: 20px; height: 20px; border: 2px solid #a1a1aa; border-radius: 50%; box-sizing: border-box; }
+.q-opt input[type="radio"]:checked::before { border-color: #06b6d4; background: radial-gradient(circle, #06b6d4 0 4.5px, transparent 5px); }
+.q-opt input:focus-visible { outline: 2px solid #06b6d4; outline-offset: 2px; border-radius: 4px; }
+.q-upload { height: 40px; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 0 8px 0 16px; background: #000; border: 1px solid #fff; border-radius: 8px; color: #444; font: 400 16px/21px "Inter", sans-serif; letter-spacing: .16px; cursor: pointer; }
+.q-upload.has-file { color: #fff; }
+.q-upload span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.q-upload svg { width: 22px; height: 22px; color: #fff; flex: none; }
+.q-upload input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.q-link { height: 40px; width: 100%; background: #000; border: 1px solid #fff; border-radius: 8px; padding: 0 16px; color: #fff; font: 400 16px/21px "Inter", sans-serif; letter-spacing: .16px; }
+.q-link::placeholder { color: #444; }
+.q-add { align-self: flex-start; display: inline-flex; align-items: center; gap: 4px; background: none; border: 0; padding: 0; color: #c084fc; font: 700 16px/21px "Inter", sans-serif; letter-spacing: .16px; }
+.q-add svg { width: 24px; height: 24px; }
+
+/* app home: matched to the Figma Home Page frame */
+.hs-welcome { padding: 24px 16px; font: 700 24px/21px "Inter", sans-serif; letter-spacing: .24px; text-align: center; }
+.hs-ask { margin-top: 8px; font: 400 16px/21px "Inter", sans-serif; letter-spacing: .16px; text-align: center; }
+.hs-bar { margin-top: 8px; height: 64px; display: flex; align-items: center; gap: 10px; padding: 0 18px 0 22px; border: 2px solid transparent; border-radius: 999px; background: linear-gradient(#000, #000) padding-box, linear-gradient(0deg, #06b6d4 0%, #8b5cf6 100%) border-box; }
+.hs-bar input[type="text"] { flex: 1; min-width: 0; width: auto; background: none; border: 0; padding: 0; color: #fff; font: 400 16px/21px "Inter", sans-serif; letter-spacing: .16px; outline: none; }
+.hs-bar input::placeholder { color: rgba(255, 255, 255, .5); }
+.hs-bar button { background: none; border: 0; padding: 4px; color: #fff; display: grid; place-items: center; }
+
+.screen.home { gap: 16px; padding-top: 12px; font-family: "Inter", sans-serif; }
+.h-welcome { border-radius: 8px; padding: 16px; display: flex; flex-direction: column; gap: 8px; background: linear-gradient(180deg, rgba(0, 0, 0, .3) 0%, #121212 99.5%); }
+.h-welcome h2 { font: 700 24px/21px "Inter", sans-serif; letter-spacing: .24px; }
+.h-welcome p { font: 400 16px/21px "Inter", sans-serif; letter-spacing: .16px; }
+.h-welcome em { font-style: normal; color: #c084fc; }
+.h-gig { border: 2px solid transparent; border-radius: 8px; padding: 16px; background: linear-gradient(#121212, #121212) padding-box, linear-gradient(0deg, #06b6d4 0%, #8b5cf6 100%) border-box; filter: drop-shadow(0 4px 2px rgba(0, 0, 0, .25)); display: flex; flex-direction: column; }
+.h-row { display: flex; gap: 16px; align-items: flex-start; }
+.h-title { width: 145.94px; flex: none; font: 700 18px/21px "Inter", sans-serif; letter-spacing: .18px; }
+.h-pill { height: 20px; padding: 0 8px; border: 1px solid transparent; border-radius: 8px; background: linear-gradient(#121212, #121212) padding-box, linear-gradient(180deg, #06b6d4 0%, #8b5cf6 100%) border-box; display: inline-flex; align-items: center; font: 400 12px/21px "Inter", sans-serif; letter-spacing: .12px; white-space: nowrap; }
+.h-view { margin-left: auto; background: none; border: 0; padding: 0; color: #c084fc; font: 700 12px/21px "Inter", sans-serif; letter-spacing: .12px; text-transform: uppercase; white-space: nowrap; }
+.h-inst { margin-top: 8px; font: 400 16px/21px "Inter", sans-serif; letter-spacing: .16px; }
+.h-church { margin-top: 8px; font: 400 12px/21px "Inter", sans-serif; letter-spacing: .12px; }
+.h-setlist { margin-top: 8px; width: 100%; border: 0; border-radius: 8px; padding: 8px; background: #06b6d4; color: #000; font: 400 16px/21px "Inter", sans-serif; letter-spacing: .16px; }
+.h-setlist:hover { filter: brightness(1.1); }
+.h-recent-h { margin-top: 7px; font: 700 18px/21px "Inter", sans-serif; letter-spacing: .18px; }
+.h-recent { width: 100%; height: 54px; display: flex; align-items: center; justify-content: space-between; background: none; border: 0; border-left: 3px solid; border-image: linear-gradient(0deg, #06b6d4 0%, #8b5cf6 100%) 1; padding: 0 0 0 13px; text-align: left; color: #fff; font: 400 16px/21px "Inter", sans-serif; letter-spacing: .16px; }
+.h-recent b { display: block; font-weight: 700; }
+.h-recent > span > span { display: block; }
+.h-recent .icon { width: 22px; height: 22px; }
+.apptop .logo { font-family: "Montserrat Subrayada", "Montserrat", sans-serif; text-decoration: none; font-weight: 400; letter-spacing: 0; }
+.tabbar { border-top: 1px solid #a1a1aa; height: 64px; padding: 0 12px; align-items: center; }
+.tabbar button { width: 56px; height: 43px; justify-self: center; border-radius: 8px; }
+
+@media (max-width: 1100px) {
+  #view-app { grid-template-columns: 1fr; justify-items: center; }
+  .appnote { justify-self: center; max-width: 420px; padding-top: 0; }
+  .appnote ul, .appnote .hint { display: none; }
+}
+@media (max-width: 900px) {
+  #view-site { grid-template-columns: minmax(0, 1fr); }
+  .side { position: static; height: auto; flex-direction: row; align-items: center; justify-content: space-between; padding: 12px 16px; flex-wrap: wrap; gap: 10px; }
+  .side .logo-box { padding: 8px 12px; font-size: 16px; }
+  .side nav { flex-direction: row; flex-wrap: wrap; }
+  .side nav a { padding: 6px 10px; font-size: 14px; }
+  .hero, .levelcard { grid-template-columns: minmax(0, 1fr); }
+  .props, .promises { grid-template-columns: minmax(0, 1fr); }
+  .levels, .how { grid-template-columns: minmax(0, 1fr); }
+  .panel { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .plans { grid-template-columns: minmax(0, 1fr); }
+  .hero-card { padding: 28px 20px; }
+  .tiles { max-width: 420px; }
+}
+@media (max-width: 520px) {
+  #view-app { padding: 0; gap: 12px; }
+  .appnote { padding: 12px 16px 0; }
+  .device { width: 100%; border-radius: 0; box-shadow: none; height: calc(100dvh - 120px); min-height: 560px; }
+  .panel { grid-template-columns: minmax(0, 1fr); }
+  .faq-tabs { gap: 28px; }
+  .faqlist { padding: 4px 16px; }
+  .levels, .levelcard, .howcard, .plan { padding: 22px 18px; }
+  .foot-cols { gap: 32px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+/* Ratings page */
+.rt { display: flex; flex-direction: column; font-family: "Inter", sans-serif; letter-spacing: .01em; }
+.rt .back { align-self: flex-start; margin-bottom: 16px; }
+.rt-top { display: flex; justify-content: space-between; align-items: center; min-height: 21px; }
+.rt-top h2 { margin: 0; font: 700 24px/21px "Inter", sans-serif; letter-spacing: .01em; }
+.rt-score { display: inline-flex; align-items: center; gap: 4px; font: 400 16px/21px "Inter", sans-serif; }
+.rt-score b { font-weight: 700; }
+.rt-for { margin: 8px 0 0; color: #b3b3b3; font-size: 14px; line-height: 21px; }
+.rt-bars { margin-top: 30px; display: flex; flex-direction: column; gap: 16px; }
+.rt-bar { display: grid; grid-template-columns: 61px 273px 1fr; align-items: center; height: 24px; }
+.rt-lbl { justify-self: start; background: none; border: 0; padding: 0; color: #c084fc; text-decoration: underline; text-underline-offset: 2px; font: 400 16px/21px "Inter", sans-serif; letter-spacing: .01em; cursor: pointer; }
+.rt-lbl[aria-pressed="true"] { color: #06b6d4; }
+.rt-track { display: block; height: 24px; border: 1px solid #fff; border-radius: 4px; padding: 0 1px; box-sizing: border-box; }
+.rt-track span { display: block; height: 100%; border-radius: 3px 0 0 3px; background: linear-gradient(0deg, #06b6d4 0%, #8b5cf6 100%); }
+.rt-pct { padding-left: 16px; font: 400 16px/21px "Inter", sans-serif; }
+.rt-search { margin-top: 32px; height: 64px; box-sizing: border-box; display: flex; align-items: center; gap: 12px; padding: 0 20px 0 22px; border-radius: 40px; border: 2px solid transparent; background: linear-gradient(#000, #000) padding-box, linear-gradient(0deg, #06b6d4 0%, #8b5cf6 100%) border-box; cursor: text; }
+.rt-search input[type="text"] { flex: 1; min-width: 0; width: auto; height: auto; background: none; border: 0; padding: 0; border-radius: 0; color: #fff; font: 400 16px/21px "Inter", sans-serif; letter-spacing: .01em; outline: none; }
+.rt-search input::placeholder { color: rgba(255, 255, 255, .5); }
+.rt-search:focus-within { box-shadow: 0 0 0 2px rgba(6, 182, 212, .35); }
+.rt-search svg { flex: none; }
+.rt-sort { position: relative; margin-top: 16px; display: flex; align-items: center; gap: 7px; font: 400 14px/21px "Inter", sans-serif; }
+.rt-sortbtn { display: inline-flex; align-items: center; gap: 4px; background: none; border: 0; padding: 0; color: #fff; font: inherit; letter-spacing: inherit; cursor: pointer; }
+.rt-sortbtn svg { transition: transform .15s; }
+.rt-sortbtn[aria-expanded="true"] svg { transform: rotate(180deg); }
+.rt-menu { position: absolute; z-index: 5; top: 29px; left: 0; width: 376px; max-width: 100%; box-sizing: border-box; display: flex; flex-direction: column; gap: 12px; padding: 16px; border: 1.5px solid transparent; border-radius: 8px; background: linear-gradient(#121212, #121212) padding-box, linear-gradient(0deg, #06b6d4 0%, #8b5cf6 100%) border-box; box-shadow: 0 4px 4px rgba(0, 0, 0, .25); }
+.rt-menu button { background: none; border: 0; padding: 0; text-align: left; color: #fff; font: 400 16px/21px "Inter", sans-serif; letter-spacing: .01em; cursor: pointer; }
+.rt-menu button[aria-selected="true"] { color: #06b6d4; }
+.rt-menu button:hover, .rt-menu button:focus-visible { color: #06b6d4; outline: none; }
+.rt-chip { margin-top: 12px; color: #b3b3b3; font-size: 14px; line-height: 21px; }
+.rt-chip button { background: none; border: 0; padding: 0 0 0 6px; color: #c084fc; text-decoration: underline; font: inherit; cursor: pointer; }
+.rt-list { margin-top: 24px; display: flex; flex-direction: column; gap: 32px; }
+.rt-item { display: flex; flex-direction: column; }
+.rt-who { display: flex; align-items: center; gap: 8px; min-height: 24px; }
+.rt-who b { font: 700 16px/21px "Inter", sans-serif; letter-spacing: .01em; }
+.rt-av { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; flex: none; display: block; }
+.rt-av-ring { box-sizing: border-box; border: 2px solid transparent; background: linear-gradient(#000, #000) padding-box, linear-gradient(0deg, #06b6d4 0%, #8b5cf6 100%) border-box; }
+.rt-stars { margin-top: 6px; display: flex; gap: 1px; height: 14px; }
+.rt-stars svg { display: block; }
+.rt-head { margin: 8px 0 0; font: 700 16px/21px "Inter", sans-serif; letter-spacing: .01em; }
+.rt-body { margin: 8px 0 0; font: 400 16px/21px "Inter", sans-serif; letter-spacing: .01em; }
+.rt-body.clamp { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.rt-more { align-self: flex-end; background: none; border: 0; padding: 0; color: #c084fc; text-decoration: underline; text-underline-offset: 2px; font: 400 16px/21px "Inter", sans-serif; letter-spacing: .01em; cursor: pointer; }
+.rt-loadmore { align-self: center; }
+.rt-empty { color: #b3b3b3; margin: 0; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.ratebtn { background: none; border: 0; padding: 0; color: inherit; font: inherit; cursor: pointer; border-radius: 6px; }
+.ratebtn:hover b, .ratebtn:focus-visible b { text-decoration: underline; }
+</style>
+</head><body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="ydg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#06b6d4"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient>
+    <linearGradient id="fg_check" x1="4" y1="15" x2="4" y2="5.5" gradientUnits="userSpaceOnUse"><stop stop-color="#06B6D4"/><stop offset="1" stop-color="#8B5CF6"/></linearGradient>
+    <linearGradient id="fg_faq" x1="0" y1="32" x2="0" y2="0" gradientUnits="userSpaceOnUse"><stop stop-color="#06B6D4"/><stop offset="1" stop-color="#8B5CF6"/></linearGradient>
+  </defs>
+  <symbol id="i-doc" viewBox="0 0 24 24"><g fill="none" stroke="url(#ydg)" stroke-width="1.8" stroke-linejoin="round"><path d="M3 9 7.5 3.5h9L21 9l-9 11.5z"/><path d="M3 9h18M7.5 3.5 9.5 9 12 3.5 14.5 9l2-5.5M9.5 9 12 20.5 14.5 9"/></g></symbol>
+  <symbol id="i-maestro" viewBox="0 0 24 24"><g fill="none" stroke="url(#ydg)" stroke-width="1.8" stroke-linejoin="round"><path d="M12 2.5c.6 3.4 5.5 5.6 5.5 11a5.5 5.5 0 0 1-11 0c0-3 1.8-4.6 2.6-6.5.9 1.3 1.6 2.4 1.6 3.7 1.3-2.2 1.6-4.9 1.3-8.2z"/><path d="M12 13.5c1 1.2 2 2 2 3.4a2 2 0 0 1-4 0c0-1.3 1-2.1 2-3.4z"/></g></symbol>
+  <symbol id="i-first" viewBox="0 0 24 24"><rect x="6.5" y="3" width="4" height="18" rx="1.2" fill="url(#ydg)"/><rect x="13.5" y="3" width="4" height="18" rx="1.2" fill="url(#ydg)"/></symbol>
+  <symbol id="i-prelude" viewBox="0 0 24 24"><rect x="10" y="3" width="4" height="18" rx="1.2" fill="url(#ydg)"/></symbol>
+  <symbol id="i-stems" viewBox="-24 -24 48 48"><g fill="none" stroke="url(#ydg)" stroke-width="2.4" stroke-linecap="round"><rect x="-14" y="-12" width="24" height="6" rx="3"/><rect x="-8" y="-2.5" width="20" height="6" rx="3"/><rect x="-12" y="7" width="15" height="6" rx="3"/></g></symbol>
+  <symbol id="i-faders" viewBox="-24 -24 48 48"><path d="M-10 -12V12M0 -12V12M10 -12V12" fill="none" stroke="url(#ydg)" stroke-width="2.4" stroke-linecap="round"/><g fill="url(#ydg)"><rect x="-15" y="-9" width="10" height="6" rx="2"/><rect x="-5" y="2" width="10" height="6" rx="2"/><rect x="5" y="-5" width="10" height="6" rx="2"/></g></symbol>
+  <symbol id="i-mic" viewBox="-24 -24 48 48"><g fill="none" stroke="url(#ydg)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="-12" y="-15" width="12" height="18" rx="6"/><path d="M-16 -3a10 10 0 0 0 20 0M-6 7v6M-12 13h12M7 -10c4 3 0 6 3 9s-1 6 2 8"/></g></symbol>
+  <symbol id="i-note" viewBox="-24 -24 48 48"><g fill="none" stroke="url(#ydg)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="-3" cy="10" rx="6" ry="4.5" transform="rotate(-20 -3 10)"/><path d="M3 8V-13q7 3 9 9"/></g></symbol>
+  <symbol id="i-check" viewBox="0 0 20 20"><path d="M4 10.5 8.5 15 16 5.5" fill="none" stroke="url(#ydg)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-vetted" viewBox="0 0 24 24"><g fill="none" stroke="url(#ydg)" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M5 3h14v18l-7-4-7 4z"/><path d="m8.5 9.5 2.5 2.5 4.5-5"/></g></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><g fill="none" stroke="url(#ydg)" stroke-width="1.8" stroke-linecap="round"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/><circle cx="8" cy="14" r=".6"/><circle cx="12" cy="14" r=".6"/><circle cx="16" cy="14" r=".6"/><circle cx="8" cy="17.5" r=".6"/><circle cx="12" cy="17.5" r=".6"/></g></symbol>
+  <symbol id="i-dollar" viewBox="0 0 24 24"><path d="M16.5 7.5c-.8-1.6-2.5-2.5-4.5-2.5-2.6 0-4.5 1.4-4.5 3.4 0 4.6 9.2 2.7 9.2 7.3 0 2-2 3.3-4.7 3.3-2.2 0-4.1-1-4.8-2.8M12 2.5V5m0 14v2.5" fill="none" stroke="url(#ydg)" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-musician" viewBox="0 0 24 24"><g fill="none" stroke="url(#ydg)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7.5" r="3.5"/><path d="M2.5 20c.6-3.6 3.2-6 6.5-6 1.5 0 2.8.5 3.8 1.3"/><path d="M18 11v7.2"/><circle cx="16.2" cy="18.6" r="1.9"/><path d="M18 11c1.3.6 2.4 1.5 2.8 3"/></g></symbol>
+  <symbol id="i-church" viewBox="0 0 24 24"><g fill="none" stroke="url(#ydg)" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M12 2v5M10 4h4M6 21V12l6-5 6 5v9M3 21h18"/><path d="M10.5 21v-4a1.5 1.5 0 0 1 3 0v4"/></g></symbol>
+  <symbol id="i-pay" viewBox="0 0 24 24"><g fill="none" stroke="url(#ydg)" stroke-width="1.8" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M5.5 9v6M18.5 9v6"/></g></symbol>
+  <symbol id="n-upload" viewBox="0 0 24 24"><path d="M12 15V4M7.5 8.5 12 4l4.5 4.5M4 15v4.5h16V15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="n-addc" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></g></symbol>
+  <symbol id="n-home" viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V20h-5v-5.5h-6V20H4z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></symbol>
+  <symbol id="n-search" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></g></symbol>
+  <symbol id="n-cal" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/><path d="M7.5 13.5h1M11.5 13.5h1M15.5 13.5h1M7.5 17h1M11.5 17h1"/></g></symbol>
+  <symbol id="n-msg" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M4 4.5h16v12H9l-5 4z"/><path d="M8 9h8M8 12.5h5"/></g></symbol>
+  <symbol id="n-user" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="10" r="3.2"/><path d="M6.3 18.6c1.3-2.3 3.3-3.6 5.7-3.6s4.4 1.3 5.7 3.6"/></g></symbol>
+  <symbol id="n-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+  <symbol id="n-filter" viewBox="0 0 24 24"><path d="M3.5 4.5h17l-6.5 8v6l-4 2v-8z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></symbol>
+  <symbol id="n-back" viewBox="0 0 24 24"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="n-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="n-pin" viewBox="0 0 24 24"><path d="M12 21s-6.5-6.2-6.5-11a6.5 6.5 0 0 1 13 0c0 4.8-6.5 11-6.5 11z" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="10" r="2.3" fill="none" stroke="currentColor" stroke-width="1.7"/></symbol>
+  <symbol id="n-chev" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="n-cal-sm" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4" stroke-linecap="round"/></g></symbol>
+  <symbol id="n-star" viewBox="0 0 24 24"><path d="m12 3 2.7 5.6 6.1.8-4.5 4.2 1.1 6.1L12 16.8l-5.4 2.9 1.1-6.1L3.2 9.4l6.1-.8z" fill="url(#ydg)"/></symbol>
+  <symbol id="n-play" viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z" fill="#000"/></symbol>
+  <symbol id="n-send" viewBox="0 0 24 24"><path d="M4 12 20 4l-4 16-4-6.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+  <symbol id="pin-church" viewBox="0 0 26 32"><path d="M13 31S2 19.5 2 12a11 11 0 0 1 22 0c0 7.5-11 19-11 19z" fill="#0d0b16" stroke="url(#ydg)" stroke-width="2"/><path d="M13 5.5v4M11.2 7.2h3.6M8.5 17.5v-4.5L13 9.5l4.5 3.5v4.5z" fill="none" stroke="#06b6d4" stroke-width="1.5" stroke-linejoin="round"/></symbol>
+  <symbol id="art-mic" viewBox="0 0 64 64"><g fill="none" stroke="#c4b0ff" stroke-width="2" stroke-linecap="round"><rect x="24" y="6" width="16" height="26" rx="8"/><path d="M18 26a14 14 0 0 0 28 0M32 40v16M22 58h20"/></g></symbol>
+  <symbol id="art-keys" viewBox="0 0 64 64"><g fill="none" stroke="#c4b0ff" stroke-width="2"><rect x="6" y="18" width="52" height="28" rx="3"/><path d="M15 18v28M24 18v28M33 18v28M41 18v28M50 18v28"/><path d="M12 18v14h6V18M21 18v14h6V18M38 18v14h6V18M47 18v14h6V18" fill="#c4b0ff" fill-opacity=".35"/></g></symbol>
+  <symbol id="art-gtr" viewBox="0 0 64 64"><g fill="none" stroke="#c4b0ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M40 6l6 6-14 16"/><path d="M30 26c-5-4-13-3-16 3-2 4 1 6-2 10-3 5 0 12 6 15s12 2 14-3c2-4 5-3 8-6 4-4 2-11-3-13-1 0-2-3-7-6z"/><circle cx="24" cy="40" r="4"/></g></symbol>
+  <symbol id="art-drum" viewBox="0 0 64 64"><g fill="none" stroke="#c4b0ff" stroke-width="2" stroke-linecap="round"><ellipse cx="32" cy="26" rx="20" ry="7"/><path d="M12 26v16c0 4 9 7 20 7s20-3 20-7V26M18 31v14M46 31v14M32 33v16M10 8l16 14M54 8 38 22"/></g></symbol>
+</svg>
+
+<header class="protobar">
+  <div class="row"><span class="logo" style="font-size:18px">YEA DOC</span><span class="tag">Prototype · sample data</span></div>
+  <div class="seg" role="group" aria-label="Prototype view">
+    <button type="button" id="sw-site" data-action="view" data-view="site" aria-pressed="true">Website</button>
+    <button type="button" id="sw-app" data-action="view" data-view="app" aria-pressed="false">Web app</button>
+  </div>
+</header>
+
+<!-- ============ WEBSITE ============ -->
+<div id="view-site">
+ <div class="w-canvas" id="canvas">
+  <aside class="w-side"><div class="w-side-in">
+    <a class="w-logobox" href="#top"><span class="w-logo">Yea Doc</span></a>
+    <nav class="w-nav" aria-label="Site">
+      <a href="#top" class="cur">Home</a>
+      <a href="#perspectives" data-action="persp" data-side="musicians">Musicians</a>
+      <a href="#perspectives" data-action="persp" data-side="churches">Churches</a>
+      <a href="#membership">Memberships</a>
+    </nav>
+  </div></aside>
+
+  <main class="w-main" id="top">
+    <section class="w-hero" aria-labelledby="hero-h">
+      <div class="w-herogrp">
+        <div class="w-herocard w-fill"></div>
+        <div class="w-herotext">
+          <h1 id="hero-h"><span>Find Your Stage.</span><span>Meet Your Ministry.</span></h1>
+          <p>Yea Doc is the premier marketplace connecting elite musicians with churches that value professional talent. From Sunday morning services to mid-week rehearsals, find your rhythm in the right room.</p>
+          <div class="w-herobtns w-herobtns-top"><button type="button" class="w-btn w-btn-cyan" data-action="open-app" data-role="musician">Join The Roster</button><button type="button" class="w-btn w-btn-find" data-action="open-app" data-role="church">Find A Musician</button></div>
+        </div>
+        <div class="w-tiles" aria-hidden="true">
+          <div class="w-tile" style="left:0;top:0;width:170px;height:317.657px"><div class="ph"><svg viewBox="0 0 64 64"><use href="#art-mic"/></svg></div><img src="images/hero-1.png" alt="" onerror="this.remove()"></div>
+          <div class="w-tile" style="left:194px;top:66.1px;width:170px;height:253.487px"><div class="ph"><svg viewBox="0 0 64 64"><use href="#art-keys"/></svg></div><img src="images/hero-2.png" alt="" onerror="this.remove()"></div>
+          <div class="w-tile" style="left:0;top:341.66px;width:170px;height:293.918px"><div class="ph"><svg viewBox="0 0 64 64"><use href="#art-mic"/></svg></div><img src="images/hero-3.png" alt="" onerror="this.remove()"></div>
+          <div class="w-tile" style="left:194px;top:343.58px;width:170px;height:366.309px"><div class="ph"><svg viewBox="0 0 64 64"><use href="#art-gtr"/></svg></div><img src="images/hero-4.png" alt="" onerror="this.remove()"></div>
+        </div>
+      </div>
+      <div class="w-props">
+        <div class="w-prop w-fill"><span class="w-vpic" data-fig="vp1"></span><div><h3>Vetted Talent Pool.</h3><p>Review profiles, videos, and reliability ratings before you hire.</p></div></div>
+        <div class="w-prop w-fill"><span class="w-vpic" data-fig="vp2"></span><div><h3>End the Saturday Night Scramble.</h3><p>Post a gig in 30 seconds. Find a pro in minutes.</p></div></div>
+        <div class="w-prop w-fill"><span class="w-vpic" data-fig="vp3"></span><div><h3>Know the Pay Upfront.</h3><p>No more awkward budget talks. Clear rates listed for every engagement.</p></div></div>
+      </div>
+    </section>
+
+    <h2 class="w-h1 w-persp-h" id="perspectives"><span>Two Perspectives.</span><span>One Harmonious Community.</span></h2>
+    <p class="w-sub w-persp-sub">We are bridging the gap between gifted church musicians and ministries searching for faithful talent.</p>
+    <div class="w-toggle" role="group" aria-label="Audience">
+      <button type="button" id="persp-m" data-action="persp" data-side="musicians" aria-pressed="true">For Musicians</button>
+      <button type="button" id="persp-c" data-action="persp" data-side="churches" aria-pressed="false">For Churches</button>
+    </div>
+    <div id="persp-body" style="display:contents"></div>
+
+    <section class="w-how" aria-labelledby="how-h">
+      <div class="w-head"><h2 class="w-h1" id="how-h">How It Works</h2>
+      <p class="w-sub" style="width:900px;max-width:100%">Three steps from sign-up to Sunday, whichever side of the stage you're on.</p></div>
+      <div class="w-cols" id="how-body"></div>
+    </section>
+
+    <section class="w-panel" id="panel" aria-labelledby="panel-h">
+      <div class="w-head"><h2 class="w-h1" id="panel-h">Vetted by Players Who've Been There</h2>
+      <p class="w-sub" style="width:1040px;max-width:100%">Every musician on Yea Doc is placed by a panel of professionals who've toured with award-winning artists across the US and abroad. They know what a Sunday service demands, because they've played it.</p></div>
+      <div class="w-members">
+        <div class="w-member w-fill"><div class="w-photo"></div><b>[Name]</b><span class="role">[Instrument] · Doc</span><i>[Toured with ...]</i></div>
+        <div class="w-member w-fill"><div class="w-photo"></div><b>[Name]</b><span class="role">[Instrument] · Doc</span><i>[Toured with ...]</i></div>
+        <div class="w-member w-fill"><div class="w-photo"></div><b>[Name]</b><span class="role">[Instrument] · Doc</span><i>[Toured with ...]</i></div>
+        <div class="w-member w-fill"><div class="w-photo"></div><b>[Name]</b><span class="role">[Instrument] · Doc</span><i>[Toured with ...]</i></div>
+      </div>
+      <div class="w-promises">
+        <div class="w-promise"><b>Two reviewers on every audition</b><span>A third steps in whenever they disagree.</span></div>
+        <div class="w-promise"><b>Scored on church skills</b><span>Following the leader, transitions, key changes, and feel.</span></div>
+        <div class="w-promise"><b>Earned, never bought</b><span>No membership or payment changes a musician's tier.</span></div>
+      </div>
+    </section>
+
+    <section class="w-mem" id="membership" aria-labelledby="mem-h">
+      <div class="w-head"><h2 class="w-h1" id="mem-h">Choose Your Membership</h2>
+      <p class="w-sub">Start free. Go further with VIP.</p></div>
+      <div class="w-plans">
+        <div class="w-plan w-fill">
+          <div class="w-plan-h"><b>Standard</b><div class="w-price"><strong>Free</strong></div><em>Everything you need to play.</em></div>
+          <div class="w-divider"></div>
+          <ul class="w-benefits">
+            <li><span class="w-chk" data-fig="check"></span>Create your profile and audition for your tier</li>
+            <li><span class="w-chk" data-fig="check"></span>Search and apply for engagements</li>
+            <li><span class="w-chk" data-fig="check"></span>Message churches and musicians</li>
+            <li><span class="w-chk" data-fig="check"></span>Get paid securely through the app</li>
+            <li><span class="w-chk" data-fig="check"></span>Track your ratings and tier progress</li>
+          </ul>
+          <button type="button" class="w-btn w-btn-out" data-action="open-app" data-role="musician" data-plan="Standard">Join Free</button>
+        </div>
+        <div class="w-plan vip">
+          <div class="w-plan-h"><b>VIP</b><div class="w-price"><strong>$9.99</strong><small>/month</small></div><em>For musicians ready to grow.</em></div>
+          <div class="w-divider"></div>
+          <ul class="w-benefits">
+            <li><span class="w-chk" data-fig="check"></span>Everything in Standard</li>
+            <li><span class="w-chk" data-fig="check"></span>Access to every program Yea Doc sponsors or provides, including workshops with Doc-level musicians, at a reduced price</li>
+            <li><span class="w-chk" data-fig="check"></span>First access to urgent postings</li>
+          </ul>
+          <button type="button" class="w-btn w-btn-cyan" data-action="open-app" data-role="musician" data-plan="VIP">Go VIP</button>
+        </div>
+      </div>
+      <p class="w-fine">VIP never affects your tier or your place in search results. Tiers are earned, not bought.</p>
+      <p class="w-fine2">Churches: Free to join. A small fee applies to each booking.</p>
+    </section>
+
+    <h2 class="w-h1 w-faq-h" id="faq">Frequently Asked Questions</h2>
+    <div class="w-tabs" role="tablist" aria-label="FAQ categories">
+      <button type="button" role="tab" id="faqtab-musicians" data-action="faq" data-cat="musicians" aria-selected="true"></button>
+      <button type="button" role="tab" id="faqtab-churches" data-action="faq" data-cat="churches" aria-selected="false"></button>
+      <button type="button" role="tab" id="faqtab-payments" data-action="faq" data-cat="payments" aria-selected="false"></button>
+    </div>
+    <div class="w-faqbox" id="faq-body" role="tabpanel"></div>
+
+    <section class="w-cta w-fill" aria-labelledby="cta-h">
+      <h2 class="w-h1" id="cta-h">Your Next Sunday Starts Here.</h2>
+      <p class="w-sub">Join the musicians and churches building stronger music ministries together.</p>
+      <div class="w-herobtns">
+        <button type="button" class="w-btn w-btn-cyan" data-action="open-app" data-role="musician">Join the Roster</button>
+        <button type="button" class="w-btn w-btn-out" data-action="open-app" data-role="church">Find a Musician</button>
+      </div>
+    </section>
+
+    <footer class="w-foot">
+      <div class="w-foot-top">
+        <div class="w-foot-brand"><span class="w-logo" style="color:#fff">Yea Doc</span><span>The app that connects musicians and churches.</span></div>
+        <div class="w-foot-links">
+          <div><b>Explore</b><a href="#perspectives">Musicians</a><a href="#perspectives">Churches</a><a href="#membership">Membership</a><a href="#faq">FAQ</a></div>
+          <div><b>Company</b><a href="#top">About</a><a href="#top">Contact</a><a href="#panel">Become a Reviewer</a></div>
+          <div><b>Legal</b><a href="#top">Terms of Service</a><a href="#top">Privacy Policy</a><a href="#top" style="font-family:Inter,sans-serif;letter-spacing:0;line-height:normal">Payment Terms</a></div>
+        </div>
+      </div>
+      <div class="w-divider" style="background:#333"></div>
+      <div class="w-foot-bot"><span>© 2026 Yea Doc. All rights reserved.</span><span><span>Instagram</span><span>YouTube</span><span>Facebook</span></span></div>
+    </footer>
+  </main>
+ </div>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="view-app" hidden>
+  <div class="appnote">
+    <h2>Yea Doc web app</h2>
+    <p>Click through it like a real account. Everything runs on sample data, and nothing is saved.</p>
+    <div class="seg" role="group" aria-label="Signed in as">
+      <button type="button" id="role-musician" data-action="role" data-role="musician" aria-pressed="true">Musician</button>
+      <button type="button" id="role-church" data-action="role" data-role="church" aria-pressed="false">Church</button>
+    </div>
+    <p class="hint">Switch sides to see the app as JKey88, a keyboardist, or as Shiloh Baptist Church.</p>
+    <p style="color:var(--fg);font-weight:500;margin-top:4px">Musician home screen</p>
+    <div class="seg" role="group" aria-label="Musician home screen version">
+      <button type="button" id="hv-gigs" data-action="homever" data-v="gigs" aria-pressed="true">With gigs</button>
+      <button type="button" id="hv-search" data-action="homever" data-v="search" aria-pressed="false">With search bar</button>
+    </div>
+    <ul>
+      <li>Search: toggle Musician or Engagement, filter by instrument, tier, and distance</li>
+      <li>Apply for a gig or request a musician</li>
+      <li>Open a profile, follow, and send a message</li>
+      <li>Post a new engagement from Gigs</li>
+    </ul>
+  </div>
+  <div class="device" id="device">
+    <div class="apptop">
+      <button type="button" class="iconbtn" data-action="menu" aria-label="Open menu"><svg class="icon"><use href="#n-menu"/></svg></button>
+      <span class="logo">Yea Doc</span>
+      <button type="button" class="iconbtn" data-action="filter" aria-label="Filters"><svg class="icon"><use href="#n-filter"/></svg></button>
+    </div>
+    <div class="screen" id="screen"></div>
+    <nav class="tabbar" id="tabbar" aria-label="App"></nav>
+    <div id="overlay"></div>
+  </div>
+  <div></div>
+</div>
+
+<script>
+(() => {
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const svg = (id, cls = 'icon', vb) => `<svg class="${cls}"${vb ? ` viewBox="${vb}"` : ''} aria-hidden="true"><use href="#${id}"/></svg>`;
+
+/* ---------- reference data ---------- */
+const TIERS = {
+  doc: { name: 'Doc', icon: 'i-doc', tag: 'The Standard Everyone Learns From', desc: 'These are the players on the records other musicians study for Sunday morning. Docs bring command, creativity, and leadership to any stage, and they can lead the band as easily as play in it.' },
+  maestro: { name: 'Maestro', icon: 'i-maestro', tag: 'The Foundation of Every Great Band', desc: "The musician's musician. Maestros have world-class technique and the presence to anchor a stage. When the music director is missing, everyone looks to the Maestro for the count." },
+  first: { name: 'First-Chair', icon: 'i-first', tag: 'Consistent. Capable. Ready.', desc: 'First-Chair musicians understand the flow of a service, not just the notes. They come prepared, follow the leader, and deliver every Sunday.' },
+  prelude: { name: 'Prelude', icon: 'i-prelude', tag: 'Where Great Musicians Begin', desc: 'Skilled players building their Sunday-morning stamina. Prelude musicians bring talent and hunger, and every gig moves them forward.' }
+};
+const TIER_ORDER = ['doc', 'maestro', 'first', 'prelude'];
+const SETUPS = {
+  full: { name: 'Full Production', icon: 'i-stems', tag: 'Locked to the Click', desc: 'Click tracks, stems, personal in-ear mixes, and a silent stage. For churches running a precise production, matched with musicians who play tight to the track and build their own mix.' },
+  modern: { name: 'Modern', icon: 'i-faders', tag: 'Polished and Flexible', desc: 'A digital board, wedges or in-ears, and a click when the song calls for it. For churches with a modern sound that still leaves room to breathe.' },
+  live: { name: 'Live Flow', icon: 'i-mic', tag: 'Follow the Moment', desc: 'An open stage, organ or keys, acoustic drums, and no tracks. For churches where the music moves with the service, matched with musicians who can follow the leader through every transition and key change.' },
+  essentials: { name: 'Essentials', icon: 'i-note', tag: 'The Basics, Done Right', desc: "A simple sound system, vocal mics, and house instruments. For churches doing a lot with a little, matched with musicians who adapt to any room and bring what's needed." }
+};
+const SETUP_ORDER = ['full', 'modern', 'live', 'essentials'];
+const GENRES = ['Contemporary Worship', 'Traditional Gospel', 'CCM'];
+const INSTRUMENTS = ['Keyboard/Organ', 'Bass Guitar', 'Lead Guitar', 'Drummer', 'Horn Player', 'Singer'];
+const SHORT = { 'Keyboard/Organ': 'Keys', 'Bass Guitar': 'Bass', 'Lead Guitar': 'Lead Guitar', Drummer: 'Drums', 'Horn Player': 'Horns', Singer: 'Vocals' };
+
+const CHURCHES = {
+  shiloh: { name: 'Shiloh Baptist Church', city: 'Richmond, VA', setup: 'live', verified: true, x: 30, y: 24, dist: 3 },
+  allhands: { name: 'All Hands COGIC', city: 'Richmond, VA', setup: 'modern', verified: true, x: 74, y: 17, dist: 5 },
+  shout: { name: 'Shout Despite the Gout Ministries', city: 'Henrico, VA', setup: 'full', verified: true, x: 20, y: 46, dist: 8 },
+  allsaints: { name: 'All Saints Apostolic Church', city: 'Chesterfield, VA', setup: 'live', verified: false, x: 60, y: 58, dist: 12 },
+  rock: { name: 'The Rock', city: 'Glen Allen, VA', setup: 'essentials', verified: true, x: 40, y: 70, dist: 15 },
+  newhope: { name: 'New Hope Fellowship', city: 'Midlothian, VA', setup: 'full', verified: true, x: 84, y: 42, dist: 18 }
+};
+const ALLG = GENRES.slice();
+let GIGS = [
+  { id: 'g1', title: 'Morning Service', time: '10:00 AM', date: '2026-10-18', church: 'shiloh', instrument: 'Bass Guitar', tier: 'first', pay: 275, urgent: true, genres: ALLG, songs: ['Total Praise', 'Way Maker', 'I Need You to Survive'] },
+  { id: 'g2', title: 'Evening Service', time: '7:30 PM', date: '2026-10-21', church: 'allhands', instrument: 'Bass Guitar', tier: 'maestro', pay: 225, urgent: true, genres: ALLG, songs: ['Goodness of God', 'Break Every Chain'] },
+  { id: 'g3', title: 'Midnight Musical', time: '12:00 AM', date: '2026-10-31', church: 'shout', instrument: 'Bass Guitar', tier: 'maestro', pay: 375, urgent: false, genres: ALLG, songs: ['Victory', 'Never Would Have Made It', 'Jireh'] },
+  { id: 'g4', title: 'Youth Sunday', time: '11:00 AM', date: '2026-10-25', church: 'rock', instrument: 'Drummer', tier: 'prelude', pay: 150, urgent: false, genres: ['Contemporary Worship', 'CCM'], songs: ['Graves into Gardens', 'This Is a Move'] },
+  { id: 'g5', title: 'Church Anniversary', time: '4:00 PM', date: '2026-11-01', church: 'allsaints', instrument: 'Keyboard/Organ', tier: 'first', pay: 300, urgent: false, genres: ['Traditional Gospel'], songs: ['Blessed Assurance', 'Order My Steps', 'Total Praise'] },
+  { id: 'g6', title: 'Choir Rehearsal', time: '7:00 PM', date: '2026-10-22', church: 'newhope', instrument: 'Singer', tier: 'first', pay: 120, urgent: true, genres: ['Contemporary Worship', 'CCM'], songs: ['Firm Foundation', 'The Blessing'] },
+  { id: 'g7', title: 'Sunday Worship', time: '9:00 AM', date: '2026-10-25', church: 'allhands', instrument: 'Lead Guitar', tier: 'first', pay: 200, urgent: false, genres: ['Contemporary Worship'], songs: ['Gratitude', 'King of Kings'] },
+  { id: 'g8', title: 'Revival Night', time: '7:00 PM', date: '2026-10-28', church: 'shiloh', instrument: 'Keyboard/Organ', tier: 'maestro', pay: 325, urgent: true, genres: ['Traditional Gospel'], songs: ['Jesus Will', 'Oh Happy Day'] }
+];
+const MUSICIANS = [
+  { id: 'antjordy', img: 'images/musician-antjordy.png', profileImg: 'images/profile-antjordy.png', media: ['images/media-1.png', 'images/media-2.png'], name: 'Ant_Jordy', instrument: 'Bass Guitar', tier: 'maestro', rate: [200, 275], city: 'Richmond, VA', dist: 4, rating: 4.8, reviews: 41, gigs: 62, genres: ALLG, hue: 24, x: 36, y: 34, setups: ['live', 'modern', 'full'], bio: "I've been playing for over two decades and love playing with different musicians. If you're looking for a well versed bassist, message me and let's link up." },
+  { id: 'nessa', img: 'images/musician-nessa.png', name: 'Nessa_Bass03', instrument: 'Bass Guitar', tier: 'first', rate: [150, 200], city: 'Chesterfield, VA', dist: 11, rating: 4.6, reviews: 14, gigs: 18, genres: ['Contemporary Worship', 'CCM'], hue: 300, x: 56, y: 62, setups: ['modern', 'full'], bio: 'Worship bassist who lives on the click. Comfortable building my own in-ear mix and running stems.' },
+  { id: 'jmorris', img: 'images/musician-jmorris.png', name: 'John Morris', instrument: 'Bass Guitar', tier: 'doc', rate: [300, 375], city: 'Glen Allen, VA', dist: 14, rating: 4.9, reviews: 96, gigs: 140, genres: ALLG, hue: 210, x: 40, y: 76, setups: ['live', 'modern', 'full', 'essentials'], bio: 'Recorded and toured with gospel artists for 25 years. Happy to sit in, lead the band, or mentor a younger section.' },
+  { id: 'willie', img: 'images/musician-willie.png', name: 'WillieEarl84', instrument: 'Bass Guitar', tier: 'maestro', rate: [200, 275], city: 'Richmond, VA', dist: 6, rating: 4.7, reviews: 33, gigs: 55, genres: ['Traditional Gospel'], hue: 140, x: 26, y: 30, setups: ['live', 'essentials'], bio: 'Shout music and traditional services are home for me. I follow the preacher, not the chart.' },
+  { id: 'musicboy', img: 'images/musician-musicboy.png', name: 'MusicBoy78', instrument: 'Bass Guitar', tier: 'prelude', rate: [100, 150], city: 'Colonial Heights, VA', dist: 19, rating: 4.5, reviews: 6, gigs: 7, genres: ALLG, hue: 40, x: 70, y: 82, setups: ['modern', 'essentials'], bio: 'Three years on bass at my home church. Learning fast and ready to serve.' },
+  { id: 'marty', img: 'images/musician-marty.png', name: 'Marty Wiley', instrument: 'Bass Guitar', tier: 'doc', rate: [300, 425], city: 'Chesterfield, VA', dist: 12, rating: 5.0, reviews: 112, gigs: 210, genres: ['CCM'], hue: 190, x: 62, y: 54, setups: ['full', 'modern'], bio: 'Session and touring bassist for CCM artists. Precise, prepared, and easy to work with.' },
+  { id: 'keysdavid', name: 'KeysOfDavid', instrument: 'Keyboard/Organ', tier: 'maestro', rate: [250, 325], city: 'Richmond, VA', dist: 3, rating: 4.8, reviews: 52, gigs: 80, genres: ALLG, hue: 260, x: 32, y: 22, setups: ['live', 'modern', 'full'], bio: 'Organ and keys, B3 to synth pads. Music director for 10 years.' },
+  { id: 'tasha', name: 'Organ_Tasha', instrument: 'Keyboard/Organ', tier: 'doc', rate: [325, 400], city: 'Petersburg, VA', dist: 22, rating: 4.9, reviews: 88, gigs: 175, genres: ['Traditional Gospel'], hue: 330, x: 80, y: 86, setups: ['live', 'essentials'], bio: 'Hammond B3 is my first language. Shout music, hymns, and everything in between.' },
+  { id: 'pocket', name: 'PocketKing', instrument: 'Drummer', tier: 'first', rate: [175, 225], city: 'Richmond, VA', dist: 5, rating: 4.7, reviews: 21, gigs: 30, genres: ['Contemporary Worship', 'Traditional Gospel'], hue: 10, x: 46, y: 28, setups: ['live', 'modern'], bio: 'Groove first. Acoustic or e-drums, with or without a click.' },
+  { id: 'stix', name: 'StixLewis', instrument: 'Drummer', tier: 'maestro', rate: [225, 300], city: 'Henrico, VA', dist: 8, rating: 4.8, reviews: 37, gigs: 64, genres: ALLG, hue: 170, x: 18, y: 50, setups: ['full', 'modern', 'live'], bio: 'Drum cage, in-ears, stems: all good. I also play a mean shout.' },
+  { id: 'jay', name: 'LeadLine_Jay', instrument: 'Lead Guitar', tier: 'first', rate: [150, 200], city: 'Richmond, VA', dist: 6, rating: 4.6, reviews: 12, gigs: 22, genres: ['Contemporary Worship', 'CCM'], hue: 50, x: 52, y: 40, setups: ['full', 'modern'], bio: 'Ambient worship guitar with modelers and a direct rig.' },
+  { id: 'marcus', name: 'Brass_Marcus', instrument: 'Horn Player', tier: 'maestro', rate: [200, 250], city: 'Richmond, VA', dist: 7, rating: 4.8, reviews: 19, gigs: 40, genres: ['Traditional Gospel'], hue: 20, x: 66, y: 30, setups: ['live', 'modern'], bio: 'Trumpet and flugelhorn. Can write horn lines on the spot.' },
+  { id: 'simone', name: 'Alto_Simone', instrument: 'Singer', tier: 'first', rate: [100, 150], city: 'Midlothian, VA', dist: 16, rating: 4.7, reviews: 15, gigs: 26, genres: ALLG, hue: 280, x: 86, y: 46, setups: ['full', 'modern', 'live'], bio: 'Background vocals, alto. Quick learner, strong blend.' },
+  { id: 'ty', name: 'LeadVoice_Ty', instrument: 'Singer', tier: 'doc', rate: [275, 350], city: 'Richmond, VA', dist: 4, rating: 4.9, reviews: 70, gigs: 120, genres: ALLG, hue: 230, x: 30, y: 40, setups: ['live', 'modern', 'full', 'essentials'], bio: 'Worship leader and lead vocalist. I can lead the service or support yours.' }
+];
+const ME = { name: 'JKey88', instrument: 'Keyboard/Organ', tier: 'first', city: 'Richmond, VA', rating: 4.7, reviews: 9, gigs: 14, genres: ['Traditional Gospel', 'Contemporary Worship'], hue: 195, bio: "Keys and organ for 12 years. I love a service that moves, and I'll learn your setlist before I walk in." };
+const MY_BOOKINGS = [
+  { id: 'b1', title: 'Sunday Worship', time: '10:00 AM', date: '2026-10-18', church: 'shiloh', instrument: 'Keyboard/Organ', pay: 275, songs: ['Total Praise', 'Way Maker', 'I Need You to Survive'] },
+  { id: 'b2', title: 'Evening Revival', time: '7:00 PM', date: '2026-10-23', church: 'allhands', instrument: 'Keyboard/Organ', pay: 250, songs: ['Break Every Chain', 'Jesus Will'] }
+];
+
+const FAQ = {
+  musicians: [
+    ['How do I join Yea Doc as a musician?', "Create an account, answer a short questionnaire about your experience, and upload one or two audition videos. Our panel reviews your videos and places you in a tier. Then you're ready to apply for engagements."],
+    ['How are musician tiers decided?', "Your starting tier is set by our reviewer panel, made up of musicians who've toured with award-winning artists. Two reviewers score your videos on technique, feel, style range, and church-specific skills like following a worship leader and handling transitions and key changes. If they disagree, a third reviewer decides."],
+    ['What should I include in my audition videos?', 'Start each video by saying your Yea Doc username on camera. Then play the assigned piece for your instrument so reviewers can compare everyone fairly. You can add one free-choice video to show your strengths. Singers record the assigned piece a cappella and complete a short harmony part.'],
+    ['Can I move up a tier, and can I move down?', "Yes. After a minimum number of completed gigs, strong ratings from churches can move you up to First-Chair. Promotion to Maestro also requires a fresh video review, and Doc is reached only through panel review. If your ratings fall below your tier's standard, you'll get a warning and time to recover before any change."],
+    ['What if I disagree with my tier placement?', "You can submit new videos once, after a short waiting period, and they'll be reviewed by different reviewers."],
+    ['Can I use Yea Doc to find other musicians, not just churches?', 'Yes. You can search for musicians by instrument, tier, style, and location, then connect through in-app messaging.'],
+    ['Do I need to be a member of a church to join?', 'No. Yea Doc is open to any skilled musician who wants to serve in church music ministries.'],
+    ['How do I apply for an engagement?', 'Search engagements by instrument, date, and location, open one that fits, and tap Apply for Service. The church reviews applicants and confirms the booking in the app. You can apply once your tier placement is complete.'],
+    ['What happens if I need to cancel a booked gig?', 'Cancel as early as possible through the app so the church can find a replacement. Our full cancellation policy will be published before launch.']
+  ],
+  churches: [
+    ['How do I set up a church account?', "Create an account, complete a short questionnaire about your music ministry and equipment, and upload a few photos of your stage. Once we verify your setup, you're ready to post engagements and request musicians."],
+    ['What is a stage setup, and how do I choose ours?', "Your stage setup tells musicians what they'll be playing with: Full Production, Modern, Live Flow, or Essentials. Choose the closest match, then check the specific equipment you have. Setups aren't a ranking; they help us match you with musicians who are comfortable in your room."],
+    ['Why do you ask for photos of our equipment?', "Photos let us verify your setup, so musicians know exactly what to expect when they arrive. Until it's verified, your setup shows as unverified on your profile and postings."],
+    ['How do I post an engagement?', 'Choose the instrument and tier you need, add your event details and pay, and link the songs the musician should learn. Your stage setup fills in automatically. Mark it as urgent if you need someone soon.'],
+    ['How are musicians vetted?', "Every musician is placed by our panel of experienced professionals, who review audition videos against a detailed rubric. After that, ratings from churches with completed bookings keep each musician's standing current."],
+    ['What do the musician tiers mean?', 'Doc musicians are the standard everyone learns from. Maestros anchor any stage. First-Chair musicians are consistent and prepared. Prelude musicians are skilled players building their experience. Every tier is vetted, so choose the level that fits your service.'],
+    ['Can I request a specific musician directly?', "Yes. Open any musician's profile and tap Request Musician to invite them to one of your engagements."],
+    ['What if we need someone last-minute?', "Mark your posting as urgent. It's highlighted in search so available musicians can see it and respond quickly."],
+    ['Is Yea Doc only for certain denominations?', 'No. Yea Doc serves churches of every denomination and worship style, from traditional to contemporary, and from full productions to a single piano.'],
+    ['What happens if a musician doesn\'t show up?', 'Every booking made through Yea Doc has a record, so we can step in quickly. Our full no-show and refund policy will be published before launch.']
+  ],
+  payments: [
+    ['How do churches pay musicians?', 'All payments go through Yea Doc. The church pays when booking, and the musician is paid after the gig, so both sides are protected.'],
+    ['Can I cancel my membership anytime?', 'Yes. You can cancel VIP anytime from your account settings, and you keep access until the end of your billing period.'],
+    ['What happens to payment if a gig is canceled?', 'Refunds depend on who cancels and how much notice is given. The full refund policy will be published before launch.'],
+    ['Is my payment information secure?', 'Yes. Payments are handled by our payment provider, and Yea Doc never stores your full card or bank details.'],
+    ['Will I get records of my payments for taxes?', 'Yes. Your full booking and payment history is available in your account.']
+  ]
+};
+
+/* ---------- helpers ---------- */
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const TODAY = Date.UTC(2026, 9, 15);
+function fmtDate(iso) { const [y, m, d] = iso.split('-').map(Number); const dt = new Date(Date.UTC(y, m - 1, d)); return `${DAYS[dt.getUTCDay()].slice(0, 3)}, ${MONTHS[m - 1]} ${d}`; }
+function inDays(iso) { const [y, m, d] = iso.split('-').map(Number); const n = Math.round((Date.UTC(y, m - 1, d) - TODAY) / 864e5); return n <= 0 ? 'Today' : n === 1 ? 'Tomorrow' : `In ${n} days`; }
+function initials(n) { const p = n.replace(/[_\d]/g, ' ').trim().split(/\s+/); return ((p[0] || '?')[0] + (p[1] ? p[1][0] : (p[0][1] || ''))).toUpperCase(); }
+function avatar(m, cls = '') { const src = cls.includes('round') && m.profileImg ? m.profileImg : (!cls.includes('round') ? m.img : null); return `<div class="avatar ${cls}" style="background:linear-gradient(160deg,hsl(${m.hue} 45% 30%),hsl(${(m.hue + 40) % 360} 40% 14%))" aria-hidden="true">${esc(initials(m.name))}${src ? `<img src="${src}" alt="" onerror="this.remove()">` : ''}</div>`; }
+function tierBadge(t, withName = true) { const T = TIERS[t]; return `<span class="tierbadge"><span class="coin">${svg(T.icon)}</span>${withName ? esc(T.name) : ''}</span>`; }
+function setupBadge(s) { const S = SETUPS[s]; return `<span class="tierbadge" style="font-weight:500"><span class="coin">${svg(S.icon)}</span>${esc(S.name)}</span>`; }
+function pills(gs) { return `<div class="chips" style="gap:6px">${gs.map(g => `<span class="pill">${esc(g)}</span>`).join('')}</div>`; }
+function stars(r, n) { return `<span class="row" style="gap:4px">${svg('n-star', 'icon')}<b>${r.toFixed(1)}</b>${n != null ? `<span class="muted small">(${n})</span>` : ''}</span>`; }
+const store = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
+
+/* ---------- WEBSITE ---------- */
+const site = { side: 'musicians', faq: 'musicians' };
+const FIG = {
+vp1: `<svg width="32.2" height="41.25" viewBox="0 0 33 42" fill="none" aria-hidden="true"><path d="M13.6845 25.2083L25.0691 13.8646L21.7917 10.6562L13.6845 18.7344L10.4071 15.4688L7.12974 18.7344L13.6845 25.2083ZM0 41.25V4.58333C0 3.32292 0.4504 2.24392 1.3512 1.34635C2.252 0.448785 3.33488 0 4.59983 0H27.599C28.864 0 29.9468 0.448785 30.8476 1.34635C31.7484 2.24392 32.1988 3.32292 32.1988 4.58333V41.25L16.0994 34.375L0 41.25ZM4.59983 34.2604L16.0994 29.3333L27.599 34.2604V4.58333H4.59983V34.2604Z" fill="url(#fg_vp1)"/><defs><linearGradient id="fg_vp1" x1="16.0994" y1="0" x2="16.0994" y2="41.25" gradientUnits="userSpaceOnUse"><stop stop-color="#06B6D4"/><stop offset="1" stop-color="#8B5CF6"/></linearGradient></defs></svg>`,
+vp2: `<svg width="41.25" height="45.83" viewBox="0 0 42 46" fill="none" aria-hidden="true"><path d="M4.58333 45.8333C3.32292 45.8333 2.24392 45.3845 1.34635 44.487C0.448785 43.5894 0 42.5104 0 41.25V9.16667C0 7.90625 0.448785 6.82726 1.34635 5.92969C2.24392 5.03212 3.32292 4.58333 4.58333 4.58333H6.875V0H11.4583V4.58333H29.7917V0H34.375V4.58333H36.6667C37.9271 4.58333 39.0061 5.03212 39.9036 5.92969C40.8012 6.82726 41.25 7.90625 41.25 9.16667V41.25C41.25 42.5104 40.8012 43.5894 39.9036 44.487C39.0061 45.3845 37.9271 45.8333 36.6667 45.8333H4.58333ZM4.58333 41.25H36.6667V18.3333H4.58333V41.25ZM4.58333 13.75H36.6667V9.16667H4.58333V13.75ZM20.625 27.5C19.9757 27.5 19.4314 27.2804 18.9922 26.8411C18.553 26.4019 18.3333 25.8576 18.3333 25.2083C18.3333 24.559 18.553 24.0148 18.9922 23.5755C19.4314 23.1363 19.9757 22.9167 20.625 22.9167C21.2743 22.9167 21.8186 23.1363 22.2578 23.5755C22.697 24.0148 22.9167 24.559 22.9167 25.2083C22.9167 25.8576 22.697 26.4019 22.2578 26.8411C21.8186 27.2804 21.2743 27.5 20.625 27.5ZM9.82552 26.8411C9.38628 26.4019 9.16667 25.8576 9.16667 25.2083C9.16667 24.559 9.38628 24.0148 9.82552 23.5755C10.2648 23.1363 10.809 22.9167 11.4583 22.9167C12.1076 22.9167 12.6519 23.1363 13.0911 23.5755C13.5304 24.0148 13.75 24.559 13.75 25.2083C13.75 25.8576 13.5304 26.4019 13.0911 26.8411C12.6519 27.2804 12.1076 27.5 11.4583 27.5C10.809 27.5 10.2648 27.2804 9.82552 26.8411ZM29.7917 27.5C29.1424 27.5 28.5981 27.2804 28.1589 26.8411C27.7196 26.4019 27.5 25.8576 27.5 25.2083C27.5 24.559 27.7196 24.0148 28.1589 23.5755C28.5981 23.1363 29.1424 22.9167 29.7917 22.9167C30.441 22.9167 30.9852 23.1363 31.4245 23.5755C31.8637 24.0148 32.0833 24.559 32.0833 25.2083C32.0833 25.8576 31.8637 26.4019 31.4245 26.8411C30.9852 27.2804 30.441 27.5 29.7917 27.5ZM20.625 36.6667C19.9757 36.6667 19.4314 36.447 18.9922 36.0078C18.553 35.5686 18.3333 35.0243 18.3333 34.375C18.3333 33.7257 18.553 33.1814 18.9922 32.7422C19.4314 32.303 19.9757 32.0833 20.625 32.0833C21.2743 32.0833 21.8186 32.303 22.2578 32.7422C22.697 33.1814 22.9167 33.7257 22.9167 34.375C22.9167 35.0243 22.697 35.5686 22.2578 36.0078C21.8186 36.447 21.2743 36.6667 20.625 36.6667ZM9.82552 36.0078C9.38628 35.5686 9.16667 35.0243 9.16667 34.375C9.16667 33.7257 9.38628 33.1814 9.82552 32.7422C10.2648 32.303 10.809 32.0833 11.4583 32.0833C12.1076 32.0833 12.6519 32.303 13.0911 32.7422C13.5304 33.1814 13.75 33.7257 13.75 34.375C13.75 35.0243 13.5304 35.5686 13.0911 36.0078C12.6519 36.447 12.1076 36.6667 11.4583 36.6667C10.809 36.6667 10.2648 36.447 9.82552 36.0078ZM29.7917 36.6667C29.1424 36.6667 28.5981 36.447 28.1589 36.0078C27.7196 35.5686 27.5 35.0243 27.5 34.375C27.5 33.7257 27.7196 33.1814 28.1589 32.7422C28.5981 32.303 29.1424 32.0833 29.7917 32.0833C30.441 32.0833 30.9852 32.303 31.4245 32.7422C31.8637 33.1814 32.0833 33.7257 32.0833 34.375C32.0833 35.0243 31.8637 35.5686 31.4245 36.0078C30.9852 36.447 30.441 36.6667 29.7917 36.6667Z" fill="url(#fg_vp2)"/><defs><linearGradient id="fg_vp2" x1="20.625" y1="0" x2="20.625" y2="45.8333" gradientUnits="userSpaceOnUse"><stop stop-color="#06B6D4"/><stop offset="1" stop-color="#8B5CF6"/></linearGradient></defs></svg>`,
+vp3: `<svg width="21.5" height="41.25" viewBox="0 0 22 42" fill="none" aria-hidden="true"><path d="M8.50969 41.25V36.3229C6.4781 35.8646 4.72441 34.9861 3.24863 33.6875C1.77285 32.3889 0.689975 30.5556 0 28.1875L4.25485 26.4688C4.82983 28.3021 5.68271 29.6962 6.8135 30.651C7.9443 31.6059 9.42966 32.0833 11.2696 32.0833C12.8412 32.0833 14.1732 31.73 15.2657 31.0234C16.3582 30.3168 16.9044 29.2188 16.9044 27.7292C16.9044 26.3924 16.4827 25.3325 15.6394 24.5495C14.7961 23.7665 12.8412 22.8785 9.77465 21.8854C6.4781 20.8542 4.21651 19.6224 2.98989 18.1901C1.76327 16.7578 1.14996 15.0104 1.14996 12.9479C1.14996 10.4653 1.95493 8.53646 3.56487 7.16146C5.17481 5.78646 6.82309 5.00347 8.50969 4.8125V0H13.1095V4.8125C15.0261 5.11806 16.6073 5.8151 17.8531 6.90365C19.0989 7.99219 20.0093 9.31944 20.5843 10.8854L16.3294 12.7188C15.8694 11.4965 15.2178 10.5799 14.3745 9.96875C13.5312 9.35764 12.3812 9.05208 10.9246 9.05208C9.238 9.05208 7.95388 9.42448 7.07224 10.1693C6.19061 10.9141 5.74979 11.8403 5.74979 12.9479C5.74979 14.2083 6.32477 15.2014 7.47473 15.9271C8.62469 16.6528 10.6179 17.4167 13.4545 18.2188C16.0994 18.9826 18.1023 20.1953 19.463 21.8568C20.8238 23.5182 21.5042 25.4375 21.5042 27.6146C21.5042 30.3264 20.6993 32.3889 19.0893 33.8021C17.4794 35.2153 15.4861 36.0938 13.1095 36.4375V41.25H8.50969Z" fill="url(#fg_vp3)"/><defs><linearGradient id="fg_vp3" x1="10.7521" y1="0" x2="10.7521" y2="41.25" gradientUnits="userSpaceOnUse"><stop stop-color="#06B6D4"/><stop offset="1" stop-color="#8B5CF6"/></linearGradient></defs></svg>`,
+doc: (id) => `<svg width="100%" height="100%" viewBox="0 0 83 83" fill="none" aria-hidden="true"><circle cx="41.5" cy="41.5" r="41.5" fill="black"/><path d="M41.5001 72.9807L8.97876 33.9413L18.356 15.1868H64.6441L74.0214 33.9413L41.5001 72.9807ZM30.493 32.4784H52.5071L45.5904 18.6451H37.4097L30.493 32.4784ZM39.7709 65.5384V35.9368H15.1899L39.7709 65.5384ZM43.2292 65.5384L67.8102 35.9368H43.2292V65.5384ZM56.3441 32.4784H69.3664L62.4498 18.6451H49.4274L56.3441 32.4784ZM13.6337 32.4784H26.656L33.5727 18.6451H20.5503L13.6337 32.4784Z" fill="url(#${id})"/><defs><linearGradient id="${id}" x1="41.5001" y1="15.1868" x2="41.5001" y2="72.9807" gradientUnits="userSpaceOnUse"><stop stop-color="#06B6D4"/><stop offset="1" stop-color="#8B5CF6"/></linearGradient></defs></svg>`,
+maestro: (id) => `<svg width="100%" height="100%" viewBox="0 0 83 83" fill="none" aria-hidden="true"><circle cx="41.5" cy="41.5" r="41.5" fill="black"/><path d="M20.7501 45.3242C20.7501 49.2967 21.8098 52.9447 23.9292 56.2681C26.0485 59.591 28.8973 62.0839 32.4756 63.7468C32.0185 63.0591 31.6793 62.3453 31.4579 61.6052C31.236 60.8645 31.1251 60.1063 31.1251 59.3305C31.1251 57.9736 31.3934 56.6877 31.93 55.4727C32.4666 54.2582 33.2203 53.1654 34.1909 52.1942L41.5001 44.9913L48.8758 52.1942C49.8465 53.1654 50.5892 54.2582 51.1039 55.4727C51.618 56.6877 51.8751 57.9736 51.8751 59.3305C51.8751 60.1063 51.7641 60.8645 51.5422 61.6052C51.3209 62.3453 50.9817 63.0591 50.5246 63.7468C54.1028 62.0839 56.9516 59.591 59.071 56.2681C61.1904 52.9447 62.2501 49.2967 62.2501 45.3242C62.2501 42.4423 61.7169 39.7188 60.6506 37.1539C59.5843 34.589 58.0424 32.2978 56.0251 30.2805C54.8723 31.0298 53.6619 31.5917 52.3938 31.9664C51.1258 32.3411 49.8289 32.5284 48.5032 32.5284C44.8852 32.5284 41.7649 31.3468 39.1424 28.9836C36.5198 26.6204 35.029 23.6652 34.6699 20.1182C32.422 21.9759 30.4334 23.9278 28.7042 25.974C26.9751 28.0202 25.5197 30.1173 24.3381 32.2655C23.1565 34.4137 22.2631 36.583 21.6579 38.7733C21.0527 40.9635 20.7501 43.1472 20.7501 45.3242ZM41.5001 49.82L36.572 54.6617C35.9379 55.2957 35.448 56.0162 35.1022 56.8232C34.7563 57.6301 34.5834 58.4659 34.5834 59.3305C34.5834 61.1749 35.2607 62.76 36.6152 64.0857C37.9697 65.4114 39.598 66.0742 41.5001 66.0742C43.4022 66.0742 45.0305 65.4114 46.385 64.0857C47.7395 62.76 48.4168 61.1749 48.4168 59.3305C48.4168 58.4082 48.2438 57.5581 47.898 56.7799C47.5522 56.0018 47.0622 55.2957 46.4282 54.6617L41.5001 49.82ZM38.0417 13.4678V18.695C38.0417 21.63 39.0516 24.0929 41.0713 26.0838C43.0909 28.0746 45.5682 29.07 48.5032 29.07C49.5851 29.07 50.6393 28.887 51.6659 28.521C52.6918 28.1556 53.6616 27.6291 54.5752 26.9414L56.0649 25.7717C59.0886 28.015 61.4518 30.8658 63.1544 34.3241C64.8571 37.7825 65.7084 41.4492 65.7084 45.3242C65.7084 52.0726 63.3608 57.7944 58.6655 62.4897C53.9703 67.1849 48.2484 69.5326 41.5001 69.5326C34.7517 69.5326 29.0299 67.1849 24.3346 62.4897C19.6394 57.7944 17.2917 52.0726 17.2917 45.3242C17.2917 39.3961 19.1529 33.599 22.8752 27.9331C26.597 22.2666 31.6525 17.4449 38.0417 13.4678Z" fill="url(#${id})"/><defs><linearGradient id="${id}" x1="41.5001" y1="13.4678" x2="41.5001" y2="69.5326" gradientUnits="userSpaceOnUse"><stop stop-color="#06B6D4"/><stop offset="1" stop-color="#8B5CF6"/></linearGradient></defs></svg>`,
+first: (id) => `<svg width="100%" height="100%" viewBox="0 0 83 88" fill="none" aria-hidden="true"><circle cx="41.5" cy="46.1694" r="41.5" fill="black"/><rect x="25.6643" width="13.1882" height="70" fill="url(#${id})"/><rect x="44.1475" width="13.1882" height="70" fill="url(#${id})"/><defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="70" gradientUnits="userSpaceOnUse"><stop stop-color="#06B6D4"/><stop offset="1" stop-color="#8B5CF6"/></linearGradient></defs></svg>`,
+prelude: (id) => `<svg width="100%" height="100%" viewBox="0 0 83 88" fill="none" aria-hidden="true"><circle cx="41.5" cy="46.1694" r="41.5" fill="black"/><rect x="34.906" width="13.1882" height="70" fill="url(#${id})"/><defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="70" gradientUnits="userSpaceOnUse"><stop stop-color="#06B6D4"/><stop offset="1" stop-color="#8B5CF6"/></linearGradient></defs></svg>`,
+faq: {
+  musicians: (f) => `<svg width="40" height="31.05" viewBox="0 0 40 32" fill="none" aria-hidden="true"><path d="M26.8 29.6C25.8333 28.6333 25.35 27.3667 25.35 25.8C25.35 24.2333 25.8333 22.9667 26.8 22C27.7667 21.0333 29.0333 20.55 30.6 20.55C31.1667 20.55 31.6833 20.6167 32.15 20.75C32.6167 20.8833 33.0333 21.0833 33.4 21.35V11.05H40V14.05H35.85V25.8C35.85 27.3667 35.3667 28.6333 34.4 29.6C33.4333 30.5667 32.1667 31.05 30.6 31.05C29.0333 31.05 27.7667 30.5667 26.8 29.6ZM10.6 12.9C9.2 11.5 8.5 9.7 8.5 7.5C8.5 5.3 9.2 3.5 10.6 2.1C12 0.7 13.8 0 16 0C18.2 0 20 0.7 21.4 2.1C22.8 3.5 23.5 5.3 23.5 7.5C23.5 9.7 22.8 11.5 21.4 12.9C20 14.3 18.2 15 16 15C13.8 15 12 14.3 10.6 12.9ZM0 31.05V26.35C0 25.2833 0.283333 24.2583 0.85 23.275C1.41667 22.2917 2.26667 21.55 3.4 21.05C5.9 19.95 8.125 19.175 10.075 18.725C12.025 18.275 14 18.05 16 18.05C17.5667 18.05 19.075 18.175 20.525 18.425C21.975 18.675 23.4833 19.0833 25.05 19.65C23.2833 21.1833 22.2667 23.0667 22 25.3C21.7333 27.5333 22.4 29.45 24 31.05H0Z" fill="${f}"/></svg>`,
+  churches: (f) => `<svg width="40" height="42" viewBox="0 0 40 42" fill="none" aria-hidden="true"><path d="M0 42V26.55L8.25 22.9V16.35L18.5 11.1V7H14.5V4H18.5V0H21.5V4H25.5V7H21.5V11.1L31.75 16.35V22.9L40 26.55V42H24V35.5C24 34.4333 23.6 33.5 22.8 32.7C22 31.9 21.0667 31.5 20 31.5C18.9333 31.5 18 31.9 17.2 32.7C16.4 33.5 16 34.4333 16 35.5V42H0ZM21.95 23.95C22.4833 23.4167 22.75 22.7667 22.75 22C22.75 21.2333 22.4833 20.5833 21.95 20.05C21.4167 19.5167 20.7667 19.25 20 19.25C19.2333 19.25 18.5833 19.5167 18.05 20.05C17.5167 20.5833 17.25 21.2333 17.25 22C17.25 22.7667 17.5167 23.4167 18.05 23.95C18.5833 24.4833 19.2333 24.75 20 24.75C20.7667 24.75 21.4167 24.4833 21.95 23.95Z" fill="${f}"/></svg>`,
+  payments: (f) => `<svg width="44" height="32" viewBox="0 0 44 32" fill="none" aria-hidden="true"><path d="M3 32C2.175 32 1.46883 31.7062 0.8815 31.1185C0.293833 30.5312 0 29.825 0 29V6H3V29H38V32H3ZM9 26C8.175 26 7.46883 25.7062 6.8815 25.1185C6.29383 24.5312 6 23.825 6 23V3C6 2.175 6.29383 1.46867 6.8815 0.881C7.46883 0.293666 8.175 0 9 0H41C41.825 0 42.5313 0.293666 43.119 0.881C43.7063 1.46867 44 2.175 44 3V23C44 23.825 43.7063 24.5312 43.119 25.1185C42.5313 25.7062 41.825 26 41 26H9ZM14 23C14 21.6 13.5167 20.4167 12.55 19.45C11.5833 18.4833 10.4 18 9 18V23H14ZM36 23H41V18C39.6 18 38.4167 18.4833 37.45 19.45C36.4833 20.4167 36 21.6 36 23ZM25 19C26.6667 19 28.0833 18.4167 29.25 17.25C30.4167 16.0833 31 14.6667 31 13C31 11.3333 30.4167 9.91667 29.25 8.75C28.0833 7.58333 26.6667 7 25 7C23.3333 7 21.9167 7.58333 20.75 8.75C19.5833 9.91667 19 11.3333 19 13C19 14.6667 19.5833 16.0833 20.75 17.25C21.9167 18.4167 23.3333 19 25 19ZM9 8C10.4 8 11.5833 7.51667 12.55 6.55C13.5167 5.58333 14 4.4 14 3H9V8ZM41 8V3H36C36 4.4 36.4833 5.58333 37.45 6.55C38.4167 7.51667 39.6 8 41 8Z" fill="${f}"/></svg>`
+},
+check: `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10.5L8.5 15L16 5.5" stroke="url(#fg_check)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+chev: `<svg width="16" height="16" viewBox="0 0 17 16" fill="none" aria-hidden="true"><path d="M4.00391 10L8.0078 6L12.0117 10" stroke="#06B6D4" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+};
+let figN = 0;
+function tierIcon(k, big) {
+  const tall = k === 'first' || k === 'prelude';
+  const w = big ? 83 : (tall ? 38.8 : 41), h = big ? (tall ? 87.67 : 83) : 41;
+  return `<span class="w-ic" style="width:${w}px;height:${h}px">${FIG[k]('fgt' + (++figN))}</span>`;
+}
+function fillFig(root) { root.querySelectorAll('[data-fig]').forEach(el => { const v = FIG[el.dataset.fig]; if (typeof v === 'string') el.innerHTML = v; }); }
+const SETUP_FIG = (() => {
+  const C = '<circle cx="S" cy="S" r="S" fill="black"/>';
+  const g = (id, x, y1, y2) => `<defs><linearGradient id="${id}" x1="${x}" y1="${y1}" x2="${x}" y2="${y2}" gradientUnits="userSpaceOnUse"><stop stop-color="#06B6D4"/><stop offset="1" stop-color="#8B5CF6"/></linearGradient></defs>`;
+  const wrap = (vb, body) => `<svg width="100%" height="100%" viewBox="0 0 ${vb} ${vb}" fill="none" aria-hidden="true">${C.replace(/S/g, vb / 2)}${body}</svg>`;
+  return {
+    big: {
+      full: (id) => wrap(83, `<path d="M42.3647 51.8541C45.7186 51.8543 48.437 54.5735 48.437 57.9274C48.4368 61.2811 45.7185 63.9995 42.3647 63.9996H26.8022C23.4485 63.9995 20.7292 61.2811 20.729 57.9274C20.729 54.5735 23.4484 51.8543 26.8022 51.8541H42.3647ZM26.8022 55.3541C25.3814 55.3543 24.229 56.5065 24.229 57.9274C24.2292 59.3481 25.3815 60.4995 26.8022 60.4996H42.3647C43.7855 60.4995 44.9368 59.3481 44.937 57.9274C44.937 56.5065 43.7856 55.3543 42.3647 55.3541H26.8022ZM56.1978 36.2916C59.5517 36.2916 62.271 39.0109 62.271 42.3649C62.2708 45.7187 59.5516 48.4371 56.1978 48.4371H33.7192C30.3654 48.4371 27.6462 45.7187 27.646 42.3649C27.646 39.0109 30.3653 36.2916 33.7192 36.2916H56.1978ZM33.7192 39.7916C32.2983 39.7916 31.146 40.9439 31.146 42.3649C31.1462 43.7857 32.2984 44.9371 33.7192 44.9371H56.1978C57.6186 44.9371 58.7708 43.7857 58.771 42.3649C58.771 40.9439 57.6187 39.7916 56.1978 39.7916H33.7192ZM52.7397 20.7291C56.0937 20.7291 58.813 23.4484 58.813 26.8024C58.8128 30.1562 56.0936 32.8746 52.7397 32.8746H23.3442C19.9904 32.8746 17.2712 30.1562 17.271 26.8024C17.271 23.4484 19.9903 20.7291 23.3442 20.7291H52.7397ZM23.3442 24.2291C21.9233 24.2291 20.771 25.3814 20.771 26.8024C20.7712 28.2232 21.9234 29.3746 23.3442 29.3746H52.7397C54.1606 29.3746 55.3128 28.2232 55.313 26.8024C55.313 25.3814 54.1607 24.2291 52.7397 24.2291H23.3442Z" fill="url(#${id})"/>${g(id, 17.271, 63.9996, 20.7291)}`),
+      modern: (id) => wrap(83, `<path d="M24.2085 22.4587C25.1749 22.4589 25.9585 23.2423 25.9585 24.2087V27.6667H28.5308C29.9633 27.6667 31.1245 28.828 31.1245 30.2605V33.7185C31.1245 35.151 29.9633 36.3123 28.5308 36.3123H25.9585V58.7917C25.9584 59.7581 25.1748 60.5416 24.2085 60.5417C23.2421 60.5417 22.4586 59.7581 22.4585 58.7917V36.3123H19.8853C18.4528 36.3123 17.2915 35.151 17.2915 33.7185V30.2605C17.2915 28.828 18.4528 27.6667 19.8853 27.6667H22.4585V24.2087C22.4585 23.2422 23.242 22.4587 24.2085 22.4587ZM41.5005 22.4587C42.4667 22.459 43.2505 23.2424 43.2505 24.2087V44.9587H45.8228C47.2552 44.9587 48.4165 46.12 48.4165 47.5525V51.0105C48.4165 52.443 47.2552 53.6042 45.8228 53.6042H43.2505V58.7917C43.2504 59.7579 42.4666 60.5414 41.5005 60.5417C40.5341 60.5417 39.7506 59.7581 39.7505 58.7917V53.6042H37.1772C35.7448 53.6042 34.5835 52.443 34.5835 51.0105V47.5525C34.5835 46.12 35.7448 44.9587 37.1772 44.9587H39.7505V24.2087C39.7505 23.2422 40.534 22.4587 41.5005 22.4587ZM58.7915 22.4587C59.7579 22.4589 60.5415 23.2423 60.5415 24.2087V32.8542H63.1147C64.547 32.8545 65.7085 34.0156 65.7085 35.448V38.906C65.7085 40.3384 64.547 41.4995 63.1147 41.4998H60.5415V58.7917C60.5414 59.7581 59.7578 60.5416 58.7915 60.5417C57.8252 60.5416 57.0416 59.758 57.0415 58.7917V41.4998H54.4683C53.0359 41.4996 51.8745 40.3384 51.8745 38.906V35.448C51.8745 34.0156 53.0359 32.8544 54.4683 32.8542H57.0415V24.2087C57.0415 23.2424 57.8252 22.4589 58.7915 22.4587Z" fill="url(#${id})"/>${g(id, 17.2915, 60.5417, 22.4587)}`),
+      live: (id) => wrap(83, `<path d="M57.0625 36.2914C58.0289 36.2914 58.8124 37.075 58.8125 38.0414C58.8125 42.6329 56.9888 47.0369 53.7422 50.2836C50.9106 53.1152 47.1988 54.864 43.25 55.265V62.2289H51.0098C51.9762 62.2289 52.7596 63.0125 52.7598 63.9789C52.7598 64.9454 51.9763 65.7289 51.0098 65.7289H31.9893C31.0229 65.7287 30.2393 64.9453 30.2393 63.9789C30.2394 63.0126 31.023 62.229 31.9893 62.2289H39.75V55.265C35.8012 54.864 32.0894 53.1152 29.2578 50.2836C26.0112 47.0369 24.1875 42.6329 24.1875 38.0414C24.1876 37.075 24.9711 36.2914 25.9375 36.2914C26.9039 36.2914 27.6874 37.075 27.6875 38.0414C27.6875 41.7046 29.1431 45.2176 31.7334 47.808C34.3237 50.3983 37.8367 51.8539 41.5 51.8539C45.1633 51.8539 48.6763 50.3983 51.2666 47.808C53.8569 45.2176 55.3125 41.7046 55.3125 38.0414C55.3126 37.075 56.0961 36.2914 57.0625 36.2914ZM41.5 17.2709C47.7188 17.2711 52.7598 22.3128 52.7598 28.5316V37.1771C52.7598 43.396 47.7188 48.4377 41.5 48.4379C35.2812 48.4377 30.2393 43.396 30.2393 37.1771V28.5316C30.2393 22.3127 35.2812 17.271 41.5 17.2709ZM41.5 20.7709C37.2142 20.771 33.7393 24.2457 33.7393 28.5316V37.1771C33.7393 41.463 37.2142 44.9377 41.5 44.9379C45.7858 44.9377 49.2598 41.463 49.2598 37.1771V28.5316C49.2598 24.2458 45.7858 20.7711 41.5 20.7709Z" fill="url(#${id})"/>${g(id, 24.1875, 65.7289, 17.2709)}`),
+      essentials: (id) => wrap(83, `<path d="M42.2217 19.2838C42.7487 18.9677 43.403 18.9517 43.9453 19.2408C51.2608 23.1413 56.1811 29.0361 58.626 36.8571C58.9141 37.7794 58.3998 38.7611 57.4775 39.0494C56.5552 39.3378 55.5737 38.8232 55.2852 37.901C53.4181 31.9288 49.9632 27.2659 44.8721 23.8668V53.9742C44.8719 54.3013 44.7793 54.6059 44.623 54.8678C44.4937 56.1824 44.0105 57.4564 43.2812 58.5895C41.9926 60.5918 39.8913 62.2517 37.3213 63.1871C34.7515 64.1223 32.0758 64.2011 29.8018 63.4957C27.5262 62.7897 25.5549 61.2525 24.707 58.9235C23.8594 56.5942 24.3814 54.1488 25.6709 52.1451C26.9596 50.1431 29.0601 48.4838 31.6299 47.5485C34.1999 46.6131 36.8762 46.5334 39.1504 47.2389C39.9394 47.4837 40.6904 47.831 41.3721 48.274V20.7848C41.3721 20.1701 41.6946 19.6001 42.2217 19.2838ZM38.1133 50.5817C36.6338 50.1228 34.7438 50.14 32.8271 50.8375C30.9103 51.5353 29.4516 52.7371 28.6133 54.0397C27.776 55.3407 27.603 56.6456 27.9961 57.7262C28.3895 58.8067 29.3611 59.6955 30.8389 60.1539C32.3183 60.6128 34.2083 60.5956 36.125 59.8981C38.0416 59.2004 39.4995 57.9984 40.3379 56.6959C41.1753 55.3948 41.3492 54.0901 40.9561 53.0094C40.5627 51.9288 39.591 51.0402 38.1133 50.5817Z" fill="url(#${id})"/>${g(id, 24.2939, 63.9652, 19.0348)}`)
+    },
+    sm: {
+      full: (id) => wrap(41, `<path d="M26.0522 11.1041H11.5314C10.3521 11.1041 9.396 12.0602 9.396 13.2395C9.396 14.4189 10.3521 15.375 11.5314 15.375H26.0522C27.2316 15.375 28.1877 14.4189 28.1877 13.2395C28.1877 12.0602 27.2316 11.1041 26.0522 11.1041Z" stroke="url(#${id}a)" stroke-width="1.70833" stroke-linecap="round" stroke-linejoin="round"/><path d="M27.7606 18.7916H16.6564C15.4771 18.7916 14.521 19.7477 14.521 20.927C14.521 22.1064 15.4771 23.0625 16.6564 23.0625H27.7606C28.9399 23.0625 29.896 22.1064 29.896 20.927C29.896 19.7477 28.9399 18.7916 27.7606 18.7916Z" stroke="url(#${id}b)" stroke-width="1.70833" stroke-linecap="round" stroke-linejoin="round"/><path d="M20.9274 26.4791H13.2399C12.0606 26.4791 11.1045 27.4352 11.1045 28.6145C11.1045 29.7939 12.0606 30.75 13.2399 30.75H20.9274C22.1068 30.75 23.0628 29.7939 23.0628 28.6145C23.0628 27.4352 22.1068 26.4791 20.9274 26.4791Z" stroke="url(#${id}c)" stroke-width="1.70833" stroke-linecap="round" stroke-linejoin="round"/>${g(id + 'a', 9.396, 15.375, 11.1041)}${g(id + 'b', 14.521, 23.0625, 18.7916)}${g(id + 'c', 11.1045, 30.75, 26.4791)}`),
+      modern: (id) => wrap(41, `<path d="M11.9585 11.1039C12.43 11.1041 12.813 11.4868 12.813 11.9584V13.6664H14.0933C14.8008 13.6664 15.3743 14.2402 15.3745 14.9476V16.6566C15.3744 17.3641 14.8008 17.9379 14.0933 17.9379H12.813V29.0414C12.813 29.513 12.43 29.8956 11.9585 29.8959C11.4868 29.8959 11.104 29.5131 11.104 29.0414V17.9379H9.82275C9.11523 17.9379 8.54166 17.3641 8.5415 16.6566V14.9476C8.5417 14.2402 9.11526 13.6664 9.82275 13.6664H11.104V11.9584C11.104 11.4866 11.4868 11.1039 11.9585 11.1039ZM20.5005 11.1039C20.9719 11.1043 21.354 11.4869 21.354 11.9584V22.2084H22.6353C23.3428 22.2085 23.9165 22.7821 23.9165 23.4896V25.1976C23.9165 25.9052 23.3428 26.4788 22.6353 26.4789H21.354V29.0414C21.354 29.5129 20.9719 29.8954 20.5005 29.8959C20.0287 29.8959 19.646 29.5131 19.646 29.0414V26.4789H18.3647C17.6571 26.4789 17.0835 25.9052 17.0835 25.1976V23.4896C17.0835 22.782 17.6571 22.2084 18.3647 22.2084H19.646V11.9584C19.646 11.4866 20.0287 11.1039 20.5005 11.1039ZM29.0415 11.1039C29.513 11.1041 29.896 11.4868 29.896 11.9584V16.2289H31.1772C31.8847 16.229 32.4583 16.8027 32.4585 17.5101V19.2191C32.4583 19.9265 31.8847 20.5003 31.1772 20.5004H29.896V29.0414C29.896 29.513 29.513 29.8956 29.0415 29.8959C28.5699 29.8957 28.188 29.513 28.188 29.0414V20.5004H26.9067C26.1992 20.5004 25.6256 19.9266 25.6255 19.2191V17.5101C25.6257 16.8027 26.1992 16.2289 26.9067 16.2289H28.188V11.9584C28.188 11.4867 28.5699 11.1041 29.0415 11.1039Z" fill="url(#${id})"/>${g(id, 8.5415, 29.8959, 11.1039)}`),
+      live: (id) => wrap(41, `<path d="M28.1875 17.2496C28.5671 17.2496 28.8748 17.5576 28.875 17.9371C28.875 20.1582 27.9924 22.2884 26.4219 23.859C25.0144 25.2665 23.1574 26.1185 21.1885 26.2809V30.0621H25.1982C25.5776 30.0624 25.8855 30.3703 25.8857 30.7496C25.8857 31.1292 25.5777 31.4369 25.1982 31.4371H15.8027C15.423 31.4371 15.1152 31.1293 15.1152 30.7496C15.1154 30.3701 15.4232 30.0621 15.8027 30.0621H19.8135V26.2809C17.8438 26.1189 15.986 25.2669 14.5781 23.859C13.0076 22.2884 12.125 20.1582 12.125 17.9371C12.1252 17.5576 12.4329 17.2496 12.8125 17.2496C13.1921 17.2496 13.4998 17.5576 13.5 17.9371C13.5 19.7936 14.2372 21.5746 15.5498 22.8873C16.8626 24.2001 18.6435 24.9371 20.5 24.9371C22.3565 24.9371 24.1374 24.2001 25.4502 22.8873C26.7628 21.5746 27.5 19.7936 27.5 17.9371C27.5002 17.5576 27.8079 17.2496 28.1875 17.2496ZM20.501 7.85413C23.4749 7.85457 25.8857 10.2659 25.8857 13.2399V17.5104C25.8857 20.4844 23.4749 22.8957 20.501 22.8961C17.5267 22.8961 15.1152 20.4847 15.1152 17.5104V13.2399C15.1152 10.2656 17.5267 7.85413 20.501 7.85413ZM20.501 9.22913C18.2861 9.22913 16.4902 11.025 16.4902 13.2399V17.5104C16.4902 19.7253 18.2861 21.5211 20.501 21.5211C22.7155 21.5207 24.5107 19.725 24.5107 17.5104V13.2399C24.5107 11.0252 22.7155 9.22957 20.501 9.22913Z" fill="url(#${id})"/>${g(id, 12.125, 31.4371, 7.85413)}`),
+      essentials: (id) => wrap(41, `<path d="M21.8462 10.519C22.0487 10.3939 22.3022 10.3824 22.5151 10.4888C26.0837 12.2731 28.4925 14.9731 29.6929 18.5737C29.8129 18.9339 29.6185 19.3238 29.2583 19.4438C28.8983 19.5636 28.5083 19.3692 28.3882 19.0093C27.4244 16.1182 25.6042 13.875 22.895 12.2651V26.479C22.895 26.6532 22.828 26.81 22.7212 26.9312C22.9205 27.8834 22.67 28.8566 22.1382 29.6831C21.5244 30.6367 20.5182 31.4333 19.2817 31.8833C18.0456 32.3331 16.7641 32.3695 15.6812 32.0337C14.5975 31.6975 13.6737 30.9706 13.2778 29.8833C12.8822 28.7959 13.1228 27.646 13.7368 26.6919C14.3505 25.7384 15.3552 24.9418 16.5913 24.4917C17.8278 24.0417 19.1106 24.0053 20.1938 24.3413C20.6792 24.4919 21.132 24.7213 21.52 25.0259V11.104C21.5201 10.8659 21.6437 10.6443 21.8462 10.519ZM19.7866 25.6548C19.0156 25.4156 18.042 25.427 17.062 25.7837C16.0823 26.1404 15.3299 26.7573 14.8931 27.436C14.4566 28.1143 14.3525 28.8166 14.5698 29.4136C14.7872 30.0104 15.3182 30.4812 16.0884 30.7202C16.8593 30.9593 17.8323 30.9478 18.812 30.5913C19.7918 30.2347 20.545 29.6177 20.9819 28.939C21.4181 28.261 21.5221 27.5592 21.3052 26.9624C21.0879 26.3655 20.5569 25.8938 19.7866 25.6548Z" fill="url(#${id})"/>${g(id, 13.0845, 32.2568, 10.4165)}`)
+    }
+  };
+})();
+function setupIcon(k, big) { const s = big ? 83 : 41; return `<span class="w-ic" style="width:${s}px;height:${s}px">${SETUP_FIG[big ? 'big' : 'sm'][k]('fgs' + (++figN))}</span>`; }
+function renderPersp() {
+  const m = site.side === 'musicians';
+  $('#persp-m').setAttribute('aria-pressed', m);
+  $('#persp-c').setAttribute('aria-pressed', !m);
+  const keys = m ? TIER_ORDER : SETUP_ORDER, src = m ? TIERS : SETUPS, ic = m ? tierIcon : setupIcon;
+  $('#persp-body').innerHTML = `
+    <div class="w-level">
+      <div class="w-level-text"><h3>${m ? 'Find Your Level. Own Your Stage.' : 'Know Your Room. Find Your Fit.'}</h3>
+      <p>${m ? 'Not all gigs are the same, and neither are all musicians. Yea Doc’s tiered roster ensures you’re matched with opportunities that respect your experience, your gear, and your craft.' : 'Every room has its own sound. Tell us yours, and we’ll match you with musicians who are ready for it.'}</p></div>
+      <div class="w-levellist w-gb">${keys.map(k => `<a href="#lvl-${k}">${ic(k, false)}${esc(src[k].name)}</a>`).join('')}</div>
+    </div>
+    <div class="w-grid w-fill">${keys.map(k => `<div class="w-cell" id="lvl-${k}">${ic(k, true)}<div><h4>${esc(src[k].name)}: ${esc(src[k].tag)}</h4><p>${esc(src[k].desc)}</p></div></div>`).join('')}</div>`;
+}
+function renderHow() {
+  const cols = [['For Musicians', [['Audition', 'Create your profile, answer a few questions about your experience, and upload one or two audition videos.'], ['Get placed', 'Our panel reviews your videos and places you in your tier, from Prelude to Doc.'], ['Get booked', 'Apply for engagements that fit your level and style, play the service, and get paid through the app.']]],
+    ['For Churches', [['Set up your stage', 'Tell us about your ministry and upload photos of your equipment so we can verify your stage setup.'], ['Post a gig', 'Choose the instrument and tier you need, add the date and pay, and link the songs for your service.'], ['Book and pay', 'Review applicants or request a musician directly, then pay securely through Yea Doc.']]]];
+  $('#how-body').innerHTML = cols.map(([h, steps]) => `<div class="w-howcard w-fill"><h3>${h}</h3><div class="w-steps">${steps.map(([t, b], i) => `<div class="w-step"><div class="w-num">${i + 1}</div><div><b>${t}</b><span>${b}</span></div></div>`).join('')}</div></div>`).join('');
+}
+const FAQ_ICONS = {
+  musicians: (c) => `<svg width="40" height="31" viewBox="0 0 40 31" aria-hidden="true"><circle cx="13" cy="8" r="7" fill="${c}"/><path d="M0 30c0-8 6-13 13-13s13 5 13 13z" fill="${c}"/><path d="M31 4v19" stroke="${c}" stroke-width="3"/><ellipse cx="28" cy="24" rx="5" ry="4" fill="${c}"/><path d="M31 4c4 1 7 3 8 7" stroke="${c}" stroke-width="3" fill="none"/></svg>`,
+  churches: (c) => `<svg width="40" height="42" viewBox="0 0 40 42" aria-hidden="true"><path d="M18.5 0h3v5h4v3h-4v5L33 21v4h-2v17H9V25H7v-4l11.5-8V8h-4V5h4z" fill="${c}"/><path d="M17 42v-8a3 3 0 0 1 6 0v8z" fill="#000"/><path d="M0 30l9-5v17H0zM40 30l-9-5v17h9z" fill="${c}"/></svg>`,
+  payments: (c) => `<svg width="44" height="32" viewBox="0 0 44 32" aria-hidden="true"><rect x="4" y="0" width="40" height="26" rx="2" fill="${c}"/><rect x="0" y="6" width="40" height="26" rx="2" fill="${c}" stroke="#000" stroke-width="2"/><circle cx="20" cy="19" r="6" fill="#000"/><circle cx="20" cy="19" r="3" fill="${c}"/><circle cx="7" cy="19" r="2" fill="#000"/><circle cx="33" cy="19" r="2" fill="#000"/></svg>`
+};
+function renderFaq() {
+  ['musicians', 'churches', 'payments'].forEach(c => { const b = $('#faqtab-' + c), on = c === site.faq; b.setAttribute('aria-selected', on); b.innerHTML = FIG.faq[c](on ? 'url(#fg_faq)' : 'white') + c[0].toUpperCase() + c.slice(1); });
+  $('#faq-body').setAttribute('aria-labelledby', 'faqtab-' + site.faq);
+  $('#faq-body').innerHTML = FAQ[site.faq].map(([q, a], i) => `${i ? '<hr>' : ''}<details class="w-q" open><summary>${i + 1}. ${esc(q)}${FIG.chev}</summary><p>${esc(a)}</p></details>`).join('');
+}
+function fitCanvas() { const w = document.documentElement.clientWidth; document.documentElement.style.setProperty('--z', w >= 900 ? Math.min(1, w / 1956) : 1); }
+window.addEventListener('resize', fitCanvas);
+
+/* ---------- APP STATE ---------- */
+const S = {
+  role: 'musician', tab: 'home', homeVersion: 'gigs', stack: [], menu: false, modal: null, toast: '',
+  search: { mode: 'engagement', instruments: new Set(), tiers: new Set(), genres: new Set(), distance: 20, urgentOnly: false, q: '' },
+  showFilter: false, sheetCollapsed: false,
+  applied: new Set(['g5']), requested: {}, following: new Set(['antjordy']),
+  threads: [
+    { id: 't1', with: 'Shiloh Baptist Church', hue: 200, unread: true, msgs: [['them', 'Hi JKey88! Setlist for Sunday is up. We may modulate on Total Praise.'], ['me', 'Got it. I will be ready for the key change.'], ['them', 'Great. Call time is 8:45.']] },
+    { id: 't2', with: 'Ant_Jordy', hue: 24, unread: true, msgs: [['them', 'You on keys at All Hands next week? Let us run the transitions Thursday.']] },
+    { id: 't3', with: 'All Hands COGIC', hue: 150, unread: false, msgs: [['them', 'Thanks for applying! We will confirm by Friday.']] }
+  ],
+  churchThreads: [
+    { id: 'c1', with: 'Ant_Jordy', hue: 24, unread: true, msgs: [['them', 'Thanks for the request. Sunday works for me. Is there a rehearsal?']] },
+    { id: 'c2', with: 'KeysOfDavid', hue: 260, unread: false, msgs: [['me', 'Can you cover Revival Night on the 28th?'], ['them', 'Yes, applied just now.']] }
+  ],
+  myPostings: [
+    { id: 'g1', applicants: ['antjordy', 'willie', 'nessa'] },
+    { id: 'g8', applicants: ['keysdavid'] }
+  ]
+};
+const cur = () => S.stack.length ? S.stack[S.stack.length - 1] : { screen: S.tab };
+function go(screen, data = {}) { S.stack.push({ screen, ...data }); S.menu = false; render(); $('#screen').scrollTop = 0; }
+function back() { S.stack.pop(); render(); }
+function setTab(t) { S.tab = t; S.stack = []; S.menu = false; S.modal = null; S.showFilter = false; render(); $('#screen').scrollTop = 0; }
+let toastTimer;
+function toast(msg) { S.toast = msg; renderOverlay(); clearTimeout(toastTimer); toastTimer = setTimeout(() => { S.toast = ''; renderOverlay(); }, 2600); }
+const threads = () => S.role === 'musician' ? S.threads : S.churchThreads;
+
+/* ---------- APP SCREENS ---------- */
+function gigCard(g, opts = {}) {
+  const c = CHURCHES[g.church];
+  const applied = S.applied.has(g.id);
+  return `<article class="card lift cardtap" data-action="gig" data-id="${g.id}" tabindex="0" aria-label="${esc(g.title)} at ${esc(c.name)}">
+    <div class="row between" style="align-items:flex-start"><div class="gtitle">${esc(g.title)} · ${esc(g.time)}</div><div style="text-align:right"><div class="gpay">$${g.pay}</div>${g.urgent ? '<span class="badge-urgent">Urgent</span>' : ''}</div></div>
+    <div class="row">${tierBadge(g.tier, false)}<b>${esc(SHORT[g.instrument])}</b><span class="muted small">· ${esc(TIERS[g.tier].name)} or above</span></div>
+    <div>${esc(c.name)} <span class="muted small">· ${c.dist} mi</span></div>
+    <div class="row muted small">${svg('n-cal-sm', 'icon')}<b style="color:var(--fg)">${fmtDate(g.date)}</b> · ${inDays(g.date)}</div>
+    <div class="row small">${setupBadge(c.setup)}</div>
+    ${pills(g.genres)}
+    ${opts.noButton ? '' : S.role === 'musician'
+      ? `<button type="button" class="btn btn-primary btn-block" data-action="apply" data-id="${g.id}" ${applied ? 'disabled' : ''}>${applied ? 'Application sent' : 'Apply for Service'}</button>`
+      : ''}
+  </article>`;
+}
+function musicianCard(m) {
+  const req = S.requested[m.id];
+  return `<article class="card lift"><div class="mcard">
+    <button type="button" class="cardtap" style="background:none;border:0;padding:0" data-action="profile" data-id="${m.id}" aria-label="Open ${esc(m.name)}'s profile">${avatar(m)}</button>
+    <div style="min-width:0"><button type="button" data-action="profile" data-id="${m.id}" style="background:none;border:0;padding:0;text-align:left" class="gtitle">${esc(m.name)}</button>
+      <div class="row" style="gap:6px;margin-top:2px">${tierBadge(m.tier, false)}<b>${esc(m.instrument)}</b></div>
+      <div class="muted small">${esc(m.city)} · ${m.dist} mi</div></div>
+    <div style="text-align:right"><div class="gpay" style="font-size:17px">$${m.rate[0]}–$${m.rate[1]}</div><div class="small">${stars(m.rating)}</div></div>
+    <div class="actions" style="display:flex;flex-direction:column;gap:10px;margin-top:6px">${pills(m.genres)}
+    ${S.role === 'church'
+      ? `<button type="button" class="btn btn-primary btn-block" data-action="request" data-id="${m.id}" ${req ? 'disabled' : ''}>${req ? 'Request sent' : 'Request Musician'}</button>`
+      : `<button type="button" class="btn btn-ghost btn-block" data-action="message" data-name="${esc(m.name)}" data-hue="${m.hue}">Message</button>`}</div>
+  </div></article>`;
+}
+
+function screenHome() {
+  if (S.role === 'church') {
+    const posts = S.myPostings.map(p => ({ ...GIGS.find(g => g.id === p.id), applicants: p.applicants })).filter(p => p.id);
+    return `<div class="h-welcome"><h2>Welcome Back, Shiloh Baptist!</h2><p>You have <em>${posts.length} open postings</em> and <em>${posts.reduce((a, p) => a + p.applicants.length, 0)} applicants</em> to review</p></div>
+      <button type="button" class="btn btn-primary btn-block" data-action="new-posting">Post a gig</button>
+      <div class="label">Your open postings</div>
+      ${posts.map(p => `<article class="card lift cardtap" data-action="applicants" data-id="${p.id}" tabindex="0">
+        <div class="row between"><div class="gtitle">${esc(p.title)} · ${esc(p.time)}</div><div class="gpay">$${p.pay}</div></div>
+        <div class="row">${tierBadge(p.tier, false)}<b>${esc(p.instrument)}</b>${p.urgent ? '<span class="badge-urgent">Urgent</span>' : ''}</div>
+        <div class="row muted small">${svg('n-cal-sm', 'icon')}${fmtDate(p.date)} · ${inDays(p.date)}</div>
+        <div class="row between"><span><b>${p.applicants.length}</b> <span class="muted">applicant${p.applicants.length === 1 ? '' : 's'}</span></span><span class="linkbtn">Review applicants</span></div>
+      </article>`).join('')}
+      <div class="label">Your stage</div>
+      <div class="card"><div class="row between">${setupBadge('live')}<span class="badge-ok">Verified</span></div><p class="muted small">Hammond B3, acoustic drums, wedges, no click. Musicians see this on every posting.</p></div>`;
+  }
+  if (S.homeVersion === 'search') {
+    return `<div class="hs-welcome">Welcome , JKey88!</div>
+      <p class="hs-ask">What are you looking to do today?</p>
+      <form class="hs-bar" id="homesearch" role="search"><label class="sr" for="hs-q">Describe your search</label><input id="hs-q" type="text" placeholder="Describe your search" autocomplete="off"><button type="submit" aria-label="Search">${svg('n-search', 'icon')}</button></form>
+      <div class="h-recent-h" style="margin-top:16px">Recent Search</div>
+      <button type="button" class="h-recent" data-action="recent"><span><b>Keyboard/Organ - Richmond VA</b><span>${GIGS.filter(g => g.instrument === 'Keyboard/Organ').length} Engagements Available</span></span>${svg('n-chev', 'icon')}</button>`;
+  }
+  const n = S.applied.size, e = MY_BOOKINGS.length;
+  return `<div class="h-welcome"><h2>Welcome Back, JKey88!</h2><p>You have <em>${n} pending application${n === 1 ? '' : 's'}</em> and <em>${e} event${e === 1 ? '' : 's'}</em> coming up soon</p></div>
+    ${MY_BOOKINGS.map((b, i) => { const c = CHURCHES[b.church]; return `<article class="h-gig">
+      <div class="h-row"><span class="h-title">${i === 0 ? 'Next Gig' : 'Upcoming Gig'}</span><span class="h-pill">${inDays(b.date)}</span><button type="button" class="h-view" data-action="booking" data-id="${b.id}">View Engagement</button></div>
+      <div class="h-inst">${esc(b.instrument)}</div>
+      <div class="h-church">${esc(c.name)}, ${esc(c.city.replace(',', ''))} · ${fmtDate(b.date)}, ${esc(b.time)}</div>
+      <button type="button" class="h-setlist" data-action="setlist" data-id="${b.id}">View Setlist</button>
+    </article>`; }).join('')}
+    <div class="h-recent-h">Recent Search</div>
+    <button type="button" class="h-recent" data-action="recent"><span><b>Keyboard/Organ - Richmond VA</b><span>${GIGS.filter(g => g.instrument === 'Keyboard/Organ').length} Engagements Available</span></span>${svg('n-chev', 'icon')}</button>`;
+}
+
+function filteredResults() {
+  const f = S.search, q = f.q.trim().toLowerCase();
+  if (f.mode === 'musician') {
+    return MUSICIANS.filter(m => (!f.instruments.size || f.instruments.has(m.instrument)) && (!f.tiers.size || f.tiers.has(m.tier)) && m.dist <= f.distance && (!q || q.split(/\s+/).every(w => (m.name + ' ' + m.instrument + ' ' + m.city).toLowerCase().includes(w))))
+      .sort((a, b) => TIER_ORDER.indexOf(a.tier) - TIER_ORDER.indexOf(b.tier) || a.dist - b.dist);
+  }
+  return GIGS.filter(g => { const c = CHURCHES[g.church]; return (!f.instruments.size || f.instruments.has(g.instrument)) && (!f.genres.size || g.genres.some(x => f.genres.has(x))) && c.dist <= f.distance && (!f.urgentOnly || g.urgent) && (!q || q.split(/\s+/).every(w => (g.title + ' ' + g.instrument + ' ' + c.name + ' ' + c.city).toLowerCase().includes(w))); })
+    .sort((a, b) => (b.urgent - a.urgent) || a.date.localeCompare(b.date));
+}
+function mapLayer(results) {
+  const f = S.search;
+  const roads = `<svg class="roads" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M-5 72 C20 66 30 80 52 74 S85 60 105 66" stroke="#7fb0d6" stroke-width="3.2" fill="none"/>
+    <g stroke="#fff" stroke-width="1.6" fill="none"><path d="M0 30H100M0 52H100M22 0V100M58 0V100M80 0V100M0 10L100 90M8 100 92 0"/></g>
+    <g stroke="#fff" stroke-width=".6" fill="none" opacity=".9"><path d="M0 18H100M0 40H100M0 62H100M0 86H100M10 0V100M34 0V100M46 0V100M70 0V100M90 0V100"/></g>
+    <g stroke="#f6c26b" stroke-width="1.4" fill="none"><path d="M64 0 C60 30 70 50 62 100"/></g>
+  </svg>`;
+  let marks = '';
+  if (f.mode === 'engagement') {
+    const ids = [...new Set(results.map(g => g.church))];
+    marks = ids.map(id => { const c = CHURCHES[id]; return `<button type="button" class="pin" style="left:${c.x}%;top:${c.y}%" data-action="church-pin" data-id="${id}" aria-label="${esc(c.name)}"><svg viewBox="0 0 26 32"><use href="#pin-church"/></svg><span>${esc(c.name)}</span></button>`; }).join('');
+  } else {
+    marks = results.map(m => `<button type="button" class="area" style="left:${m.x}%;top:${m.y}%" data-action="profile" data-id="${m.id}" aria-label="${esc(m.name)}, approximate area"><b>${esc(m.name)}</b></button>`).join('');
+  }
+  return `<div class="map">${roads}${marks}</div>`;
+}
+function filterPanel() {
+  const f = S.search, mus = f.mode === 'musician';
+  return `<div class="filterpanel" role="region" aria-label="Search filters">
+    <div class="row between"><h4 style="margin:0">Choose your search type</h4><button type="button" class="iconbtn" data-action="filter" aria-label="Close filters">${svg('n-x', 'icon')}</button></div>
+    <div class="toggle2"><button type="button" data-action="mode" data-mode="musician" aria-pressed="${mus}">Musician</button><button type="button" data-action="mode" data-mode="engagement" aria-pressed="${!mus}">Engagement</button></div>
+    <div><h4>Pick your instrument of choice</h4><div class="chips">${INSTRUMENTS.map(i => `<button type="button" class="chip" data-action="f-inst" data-v="${esc(i)}" aria-pressed="${f.instruments.has(i)}">${esc(i)}</button>`).join('')}</div></div>
+    ${mus ? `<div><h4>Select the desired tiers</h4><div class="chips">${TIER_ORDER.map(t => `<button type="button" class="chip" data-action="f-tier" data-v="${t}" aria-pressed="${f.tiers.has(t)}"><span class="coin" style="width:22px;height:22px">${svg(TIERS[t].icon)}</span>${TIERS[t].name}</button>`).join('')}</div></div>`
+      : `<div><h4>Music style</h4><div class="chips">${GENRES.map(g => `<button type="button" class="chip" data-action="f-genre" data-v="${esc(g)}" aria-pressed="${f.genres.has(g)}">${esc(g)}</button>`).join('')}</div></div>
+         <label class="row" style="gap:10px"><input type="checkbox" id="f-urgent" data-action="f-urgent" ${f.urgentOnly ? 'checked' : ''}> Urgent fills only</label>`}
+    <div><h4>Distance</h4><select id="f-distance" data-action="f-dist">${[5, 10, 20, 50].map(d => `<option value="${d}" ${f.distance === d ? 'selected' : ''}>Within ${d} miles</option>`).join('')}</select></div>
+    <button type="button" class="btn btn-primary" data-action="filter">Show ${filteredResults().length} results</button>
+  </div>`;
+}
+function screenSearch() {
+  const res = filteredResults(), mus = S.search.mode === 'musician';
+  return `<div class="mapwrap">${mapLayer(res)}
+    <div class="mapsearch"><div class="searchbar"><div>${svg('n-pin', 'icon')}<label class="sr" for="q">Search</label><input id="q" type="text" placeholder="${mus ? 'Search musicians' : 'Search engagements'} near Richmond, VA" value="${esc(S.search.q)}" data-action="q" autocomplete="off">${svg('n-search', 'icon')}</div></div></div>
+    ${S.showFilter ? filterPanel() : `<div style="position:relative;z-index:2;padding:10px 16px 0" class="chips">
+      <button type="button" class="chip" aria-pressed="true" data-action="filter">${mus ? 'Musicians' : 'Engagements'} · ${S.search.distance} mi</button>
+      ${[...S.search.instruments].map(i => `<button type="button" class="chip" data-action="f-inst" data-v="${esc(i)}" aria-label="Remove ${esc(i)}">${esc(i)} ×</button>`).join('')}
+      ${[...S.search.tiers].map(t => `<button type="button" class="chip" data-action="f-tier" data-v="${t}" aria-label="Remove ${TIERS[t].name}">${TIERS[t].name} ×</button>`).join('')}
+      <button type="button" class="chip" data-action="filter">More filters</button></div>`}
+    <div class="sheet ${S.sheetCollapsed ? 'collapsed' : ''}">
+      <button type="button" class="grab" data-action="sheet" aria-label="${S.sheetCollapsed ? 'Expand' : 'Collapse'} results"></button>
+      <div class="row between"><span class="label">${res.length} ${mus ? 'musician' : 'engagement'}${res.length === 1 ? '' : 's'}</span>${mus ? '<span class="muted small">Areas shown are approximate</span>' : ''}</div>
+      <div class="list">${res.length ? res.map(r => mus ? musicianCard(r) : gigCard(r)).join('') : `<div class="empty">Nothing matches these filters yet. Try a wider distance or fewer filters.</div>`}</div>
+    </div></div>`;
+}
+function screenGig(id) {
+  const g = GIGS.find(x => x.id === id) || MY_BOOKINGS.find(x => x.id === id); const c = CHURCHES[g.church];
+  const booked = MY_BOOKINGS.some(b => b.id === id);
+  return `<button type="button" class="back" data-action="back">${svg('n-back', 'icon')}Back</button>
+    <div><div class="gtitle" style="font-size:24px">${esc(g.title)}</div><p class="muted">${esc(c.name)} · ${esc(c.city)}</p></div>
+    <div class="card"><dl class="kv">
+      <dt>Date</dt><dd><b>${fmtDate(g.date)}</b>, ${esc(g.time)} <span class="muted">(${inDays(g.date)})</span></dd>
+      <dt>Role</dt><dd>${esc(g.instrument)}${g.tier ? ` · ${esc(TIERS[g.tier].name)} or above` : ''}</dd>
+      <dt>Pay</dt><dd><b>$${g.pay}</b>${booked ? ' · paid after the gig' : ''}</dd>
+      <dt>Stage</dt><dd>${setupBadge(c.setup)} ${c.verified ? '<span class="badge-ok">Verified</span>' : '<span class="badge-warn">Unverified</span>'}</dd>
+    </dl>${g.genres ? pills(g.genres) : ''}</div>
+    <div class="card"><span class="label">What to expect</span><p class="muted">${esc(SETUPS[c.setup].desc)}</p></div>
+    <div class="card"><span class="label">Required songs</span>${g.songs.map((s, i) => `<div class="row between"><span>${i + 1}. ${esc(s)}</span><span class="muted small">Link</span></div>`).join('')}</div>
+    ${booked ? `<button type="button" class="btn btn-ghost btn-block" data-action="message" data-name="${esc(c.name)}" data-hue="200">Message ${esc(c.name)}</button>`
+      : S.role === 'musician' ? `<button type="button" class="btn btn-primary btn-block" data-action="apply" data-id="${g.id}" ${S.applied.has(g.id) ? 'disabled' : ''}>${S.applied.has(g.id) ? 'Application sent' : 'Apply for Service'}</button>` : ''}`;
+}
+function screenProfile(id) {
+  const self = id === 'me';
+  const m = self ? ME : MUSICIANS.find(x => x.id === id);
+  const fol = S.following.has(id);
+  const req = S.requested[id];
+  return `${self ? '' : `<button type="button" class="back" data-action="back">${svg('n-back', 'icon')}Back</button>`}
+    <div class="profilehead">${avatar(m, 'round lg')}
+      <div class="follow">${self ? `<button type="button" class="btn btn-primary btn-sm" data-action="toast" data-msg="Profile editing isn't part of this prototype yet.">Edit profile</button>` : `<button type="button" class="btn ${fol ? 'btn-ghost' : 'btn-primary'} btn-sm" data-action="follow" data-id="${id}" style="min-width:110px">${fol ? 'Unfollow' : 'Follow'}</button>`}</div>
+      <div class="row between" style="margin-top:44px"><span class="gtitle" style="font-size:20px">${esc(m.name)}</span><button type="button" class="ratebtn" data-action="ratings" data-id="${id}" aria-label="${m.rating.toFixed(1)} stars from ${m.reviews} ratings. See ratings">${stars(m.rating, m.reviews)}</button></div>
+      <div class="row">${tierBadge(m.tier)}<span class="muted">· ${esc(m.instrument)}</span></div>
+      <p>${esc(m.bio)}</p>
+      ${pills(m.genres)}
+      <dl class="kv small" style="margin-top:4px"><dt>Location</dt><dd>${esc(m.city)}</dd><dt>Rate</dt><dd>${m.rate ? `$${m.rate[0]}–$${m.rate[1]} per service` : 'Set per engagement'}</dd><dt>Completed</dt><dd>${m.gigs} gigs on Yea Doc</dd>${m.setups ? `<dt>Comfortable in</dt><dd>${m.setups.map(s => SETUPS[s].name).join(', ')}</dd>` : ''}</dl>
+    </div>
+    ${self ? '' : `<div class="row" style="gap:10px">${S.role === 'church' ? `<button type="button" class="btn btn-primary" style="flex:1" data-action="request" data-id="${id}" ${req ? 'disabled' : ''}>${req ? 'Request sent' : 'Request Musician'}</button>` : ''}<button type="button" class="btn btn-ghost" style="flex:1" data-action="message" data-name="${esc(m.name)}" data-hue="${m.hue}">Message</button></div>`}
+    <div class="label">Media</div>
+    ${['Audition Tape #1', 'Live at Sunday Service'].map((t, i) => `<div><button type="button" class="media" style="width:100%;border:0" data-action="toast" data-msg="Video playback isn't part of this prototype yet." aria-label="Play ${t}"><div style="position:relative;overflow:hidden">${m.media ? `<img src="${m.media[i]}" alt="" onerror="this.remove()" style="position:absolute;left:50%;top:0;height:100%;width:auto;max-width:none;transform:translateX(-50%)">` : ''}<span class="play" style="position:relative">${svg('n-play', 'icon')}</span></div></button><div style="margin-top:8px"><b>${t}</b><div class="muted small">${i ? 'Aug 2026' : 'Jan 2026'}</div></div></div>`).join('')}`;
+}
+/* ---------- Ratings page (Figma: Ratings page › Star Rating) ---------- */
+const RT_STAR = (id, on) => on
+  ? `<svg width="15" height="14" viewBox="0 0 15 14" fill="none" aria-hidden="true"><path d="M2.74423 13.675L3.92513 8.61681L0 5.2174L5.1698 4.76879L7.1946 0L9.21939 4.76879L14.3892 5.2174L10.4641 8.61681L11.645 13.675L7.1946 10.9895L2.74423 13.675Z" fill="url(#${id})"/><defs><linearGradient id="${id}" x1="0" y1="13.675" x2="0" y2="0" gradientUnits="userSpaceOnUse"><stop stop-color="#06B6D4"/><stop offset="1" stop-color="#8B5CF6"/></linearGradient></defs></svg>`
+  : `<svg width="15" height="14" viewBox="0 0 15 14" fill="none" aria-hidden="true"><path d="M8.75879 4.96387L8.87695 5.24121L9.17578 5.2666L13.168 5.61328L10.1367 8.23926L9.9082 8.43652L9.97754 8.73047L10.8887 12.6348L7.45312 10.5615L7.19434 10.4053L6.93652 10.5615L3.5 12.6348L4.41211 8.73047L4.48047 8.43652L4.25293 8.23926L1.21973 5.61328L5.21289 5.2666L5.5127 5.24121L5.62988 4.96387L7.19434 1.2793L8.75879 4.96387Z" stroke="url(#${id})"/><defs><linearGradient id="${id}" x1="0" y1="13.675" x2="0" y2="0" gradientUnits="userSpaceOnUse"><stop stop-color="#06B6D4"/><stop offset="1" stop-color="#8B5CF6"/></linearGradient></defs></svg>`;
+const RT_BIGSTAR = `<svg width="18" height="17.1" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M3.43287 17.1066L4.91009 10.7791L0 6.52664L6.4671 5.96547L9 0L11.5329 5.96547L18 6.52664L13.0899 10.7791L14.5671 17.1066L9 13.7472L3.43287 17.1066Z" fill="url(#rt_bs)"/><defs><linearGradient id="rt_bs" x1="0" y1="17.1066" x2="0" y2="0" gradientUnits="userSpaceOnUse"><stop stop-color="#06B6D4"/><stop offset="1" stop-color="#8B5CF6"/></linearGradient></defs></svg>`;
+const RT_SEARCH = `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M18.75 18.75L14.4 14.4M16.75 8.75C16.75 13.1683 13.1683 16.75 8.75 16.75C4.33172 16.75 0.75 13.1683 0.75 8.75C0.75 4.33172 4.33172 0.75 8.75 0.75C13.1683 0.75 16.75 4.33172 16.75 8.75Z" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const RT_CHEV = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6L8 10L12 6" stroke="#06B6D4" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const RT_CHURCHES = {
+  vine: { name: 'Vine & Branch Community Church', logo: 'images/church-vine.jpg' },
+  grace: { name: 'Grace Harbor Church', logo: 'images/church-grace.jpg' },
+  shiloh: { name: 'Shiloh Baptist Church' }, allhands: { name: 'All Hands COGIC' }, shout: { name: 'Shout Despite the Gout Ministries' },
+  allsaints: { name: 'All Saints Apostolic Church' }, rock: { name: 'The Rock' }, newhope: { name: 'New Hope Fellowship' }
+};
+const RT_TEXT = {
+  5: { h: 'Flawless execution, total musical sensitivity, and elite professionalism. Requires zero hand-holding.', b: [
+    'Showed up with every chart memorized or loaded; nailed specific intros, interludes, modulations, and endings on the first pass. Locked in with the drummer from the first downbeat and followed our worship leader through every spontaneous moment without missing a cue. We would book again in a heartbeat.',
+    'Knew the whole set cold and read the room all morning. When the pastor extended the altar call, they vamped underneath it without being asked.',
+    'Arrived early, sound-checked fast, and played every song exactly as the references. Our praise team said it felt like they had been with us for years.',
+    'Tasteful, prepared, and easy to work with. Handled two last-minute key changes like they were planned.'] },
+  4: { h: 'Reliable, capable, and competent execution with minor friction in sound design, chart changes, or spontaneous flow.', b: [
+    'Knew the core song structures and chord progressions well; handled standard lead sheets and chord charts with confidence. Minor hesitation on impromptu modulations or unscripted transitional vamps.',
+    'Solid all service. Took a verse to settle into our in-ear mix, then played well the rest of the way.',
+    'Prepared and on time. A couple of endings were a little loose, but nothing the congregation would notice.'] },
+  3: { h: 'Got through the service/event, but required active guidance, had noticeable musical gaps, or experienced technical delays.', b: [
+    'Struggled with fast chart transitions, missed song endings, or relied heavily on looking at chord charts for songs that were supposed to be memorized. Hesitant outside of basic keys (e.g., C, G, D).',
+    'Needed the music director to call most of the changes. Good attitude, but more preparation on the setlist would help.'] },
+  2: { h: 'Fell behind the service often. Frequent misses on structure, cues, or keys disrupted the flow.', b: [
+    'Arrived without the setlist learned and lost the form on several songs. The team had to cover for the gaps.'] },
+  1: { h: 'Did not meet the basic requirements of the engagement.', b: [
+    'Arrived well after call time and was not prepared for the songs that were sent ahead.'] }
+};
+function rtCounts(r, n) {
+  const d = Math.max(0, Math.round(5 * n - r * n));
+  let c3 = Math.min(Math.round(d / 6), n), rest = d - 2 * c3, c4 = Math.min(rest, n - c3), c5 = n - c3 - c4;
+  rest -= c4; while (rest > 0 && c4 > 0) { c4--; c3++; rest--; }
+  return { 5: c5, 4: c4, 3: c3, 2: 0, 1: 0 };
+}
+const RT_CACHE = {};
+function rtData(id) {
+  if (RT_CACHE[id]) return RT_CACHE[id];
+  const m = id === 'me' ? ME : MUSICIANS.find(x => x.id === id);
+  const n = m.reviews, counts = rtCounts(m.rating, n);
+  const pool = [];
+  [5, 4, 3, 2, 1].forEach(s => { for (let i = 0; i < counts[s]; i++) pool.push(s); });
+  const first = [5, 3, 4].filter(s => counts[s]);
+  first.forEach(s => pool.splice(pool.indexOf(s), 1));
+  // interleave the remaining stars so the list doesn't read as sorted
+  const rest = []; const byS = { 5: pool.filter(s => s === 5), 4: pool.filter(s => s === 4), 3: pool.filter(s => s === 3) };
+  while (byS[5].length || byS[4].length || byS[3].length) { if (byS[5].length) rest.push(byS[5].pop()); if (byS[5].length) rest.push(byS[5].pop()); if (byS[4].length) rest.push(byS[4].pop()); if (byS[3].length) rest.push(byS[3].pop()); }
+  const order = first.concat(rest);
+  const firstChurch = { 5: 'vine', 3: 'grace', 4: 'shiloh' };
+  const others = ['allhands', 'newhope', 'rock', 'shout', 'allsaints', 'shiloh', 'vine', 'grace'];
+  const used = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+  const start = new Date('2026-10-11T12:00:00');
+  const list = order.map((s, i) => {
+    const t = RT_TEXT[s]; const k = used[s]++;
+    const church = i < first.length ? firstChurch[s] : others[(i * 3 + id.length) % others.length];
+    const d = new Date(start); d.setDate(start.getDate() - i * 7);
+    return { i, stars: s, church, head: t.h, body: t.b[k % t.b.length], date: d };
+  });
+  return (RT_CACHE[id] = { m, n, counts, list });
+}
+const RT_SORTS = [['high', 'Highest Rating'], ['low', 'Lowest Rating'], ['recent', 'Most Recent'], ['old', 'Oldest']];
+function rtAvatar(c) {
+  const ch = RT_CHURCHES[c];
+  return ch.logo ? `<img class="rt-av" src="${ch.logo}" alt="">` : `<span class="rt-av rt-av-ring" aria-hidden="true"></span>`;
+}
+function rtListHtml() {
+  const R = S.rt, D = rtData(R.id);
+  const q = R.q.trim().toLowerCase();
+  let list = D.list.filter(r => (!R.filter || r.stars === R.filter) && (!q || (RT_CHURCHES[r.church].name + ' ' + r.head + ' ' + r.body).toLowerCase().includes(q)));
+  const by = { high: (a, b) => b.stars - a.stars || a.i - b.i, low: (a, b) => a.stars - b.stars || a.i - b.i, recent: (a, b) => a.i - b.i, old: (a, b) => b.i - a.i }[R.sort];
+  list = list.slice().sort(by);
+  const total = list.length; list = list.slice(0, R.shown);
+  if (!total) return `<p class="rt-empty">No ratings match${R.filter ? ` ${R.filter}-star` : ''}${q ? ` “${esc(R.q)}”` : ''}.</p>`;
+  return list.map(r => {
+    const long = r.body.length > 220, open = R.expanded.has(r.i);
+    return `<article class="rt-item">
+      <div class="rt-who">${rtAvatar(r.church)}<b>${esc(RT_CHURCHES[r.church].name)}</b></div>
+      <div class="rt-stars" role="img" aria-label="${r.stars} out of 5 stars">${[1, 2, 3, 4, 5].map(k => RT_STAR('rts' + r.i + '_' + k, k <= r.stars)).join('')}</div>
+      <p class="rt-head">${esc(r.head)}</p>
+      <p class="rt-body${long && !open ? ' clamp' : ''}">${esc(r.body)}</p>
+      ${long ? `<button type="button" class="rt-more" data-action="rt-more" data-i="${r.i}">${open ? 'Show Less' : 'Read More'}</button>` : ''}
+    </article>`;
+  }).join('') + (total > R.shown ? `<button type="button" class="rt-more rt-loadmore" data-action="rt-load">Show more ratings (${total - R.shown})</button>` : '');
+}
+function screenRatings(id) {
+  if (!S.rt || S.rt.id !== id) S.rt = { id, filter: null, q: '', sort: 'recent', sortOpen: false, expanded: new Set(), shown: 10 };
+  const R = S.rt, D = rtData(id), self = id === 'me';
+  const bars = [5, 4, 3, 2, 1].map(s => {
+    const c = D.counts[s], p = D.n ? c / D.n * 100 : 0;
+    return `<div class="rt-bar">
+      <button type="button" class="rt-lbl" data-action="rt-filter" data-s="${s}" aria-pressed="${R.filter === s}">${s} star</button>
+      <span class="rt-track"><span style="width:${p.toFixed(2)}%"></span></span>
+      <span class="rt-pct">${c ? p.toFixed(1) + '%' : ''}</span></div>`;
+  }).join('');
+  return `<div class="rt">
+    <button type="button" class="back" data-action="back">${svg('n-back', 'icon')}Back</button>
+    <div class="rt-top"><h2>${self ? 'Your Overall Rating' : 'Overall Rating'}</h2><span class="rt-score">${RT_BIGSTAR}<span><b>${D.m.rating.toFixed(1)}</b> (${D.n})</span></span></div>
+    ${self ? '' : `<p class="rt-for">${esc(D.m.name)} · ${esc(D.m.instrument)}</p>`}
+    <div class="rt-bars">${bars}</div>
+    <label class="rt-search"><span class="sr-only">Search ratings</span><input id="rt-q" type="text" placeholder="Search ratings..." value="${esc(R.q)}" autocomplete="off">${RT_SEARCH}</label>
+    <div class="rt-sort"><span>Sort by:</span><button type="button" class="rt-sortbtn" data-action="rt-sort" aria-haspopup="listbox" aria-expanded="${R.sortOpen}">${RT_SORTS.find(x => x[0] === R.sort)[1]}${RT_CHEV}</button>
+      ${R.sortOpen ? `<div class="rt-menu" role="listbox" aria-label="Sort ratings">${RT_SORTS.map(([k, l]) => `<button type="button" role="option" aria-selected="${R.sort === k}" data-action="rt-sort-pick" data-k="${k}">${l}</button>`).join('')}</div>` : ''}</div>
+    ${R.filter ? `<div class="rt-chip">Showing ${R.filter}-star ratings <button type="button" data-action="rt-filter" data-s="${R.filter}">Clear</button></div>` : ''}
+    <div id="rt-list" class="rt-list">${rtListHtml()}</div>
+  </div>`;
+}
+function screenCalendar() {
+  if (S.role === 'church') {
+    return `<div class="row between"><span class="gtitle" style="font-size:22px">Gigs</span><button type="button" class="btn btn-primary btn-sm" data-action="new-posting">New posting</button></div>
+      <div class="label">Open postings</div>
+      ${S.myPostings.map(p => gigCard(GIGS.find(g => g.id === p.id), { noButton: true })).join('')}`;
+  }
+  const apps = GIGS.filter(g => S.applied.has(g.id));
+  return `<span class="gtitle" style="font-size:22px">My schedule</span>
+    <div class="label">Booked</div>
+    ${MY_BOOKINGS.map(b => { const c = CHURCHES[b.church]; return `<article class="card lift cardtap" data-action="booking" data-id="${b.id}" tabindex="0"><div class="row between"><div class="gtitle">${esc(b.title)}</div><span class="badge-ok">Confirmed</span></div><div>${esc(c.name)}</div><div class="row muted small">${svg('n-cal-sm', 'icon')}${fmtDate(b.date)} · ${esc(b.time)}</div></article>`; }).join('')}
+    <div class="label">Applications</div>
+    ${apps.length ? apps.map(g => `<article class="card lift cardtap" data-action="gig" data-id="${g.id}" tabindex="0"><div class="row between"><div class="gtitle">${esc(g.title)}</div><span class="badge-warn">Pending</span></div><div>${esc(CHURCHES[g.church].name)}</div><div class="row muted small">${svg('n-cal-sm', 'icon')}${fmtDate(g.date)} · ${esc(g.time)} · $${g.pay}</div></article>`).join('') : '<div class="empty">No open applications. Find one in Search.</div>'}`;
+}
+function screenApplicants(id) {
+  const p = S.myPostings.find(x => x.id === id), g = GIGS.find(x => x.id === id);
+  return `<button type="button" class="back" data-action="back">${svg('n-back', 'icon')}Back</button>
+    <div><div class="gtitle" style="font-size:22px">${esc(g.title)} applicants</div><p class="muted">${fmtDate(g.date)} · ${esc(g.instrument)} · $${g.pay}</p></div>
+    ${p.applicants.map(aid => musicianCard(MUSICIANS.find(m => m.id === aid))).join('')}`;
+}
+function screenNewPosting() {
+  return `<button type="button" class="back" data-action="back">${svg('n-back', 'icon')}Back</button>
+    <form class="card formgrid" id="postform" novalidate>
+      <span class="gtitle" style="font-size:22px">Create an opportunity</span>
+      <label for="p-inst">Musician type<select id="p-inst" required><option value="">Choose an instrument</option>${INSTRUMENTS.map(i => `<option>${esc(i)}</option>`).join('')}</select></label>
+      <label for="p-tier">Musician tier<select id="p-tier">${TIER_ORDER.map(t => `<option value="${t}" ${t === 'first' ? 'selected' : ''}>${TIERS[t].name} or above</option>`).join('')}</select></label>
+      <label for="p-type">Event type<select id="p-type"><option>Church Service</option><option>Church Event</option></select></label>
+      <fieldset class="radio" style="border:0;padding:0;margin:0"><legend style="font-size:14px;font-weight:500;margin-bottom:6px">Is this an urgent fill?</legend><label><input type="radio" name="urgent" value="yes"> Yes</label><label><input type="radio" name="urgent" value="no" checked> No</label></fieldset>
+      <label for="p-name">Event name<input id="p-name" type="text" placeholder="Sunday Morning Worship" required></label>
+      <div class="row" style="gap:10px"><label for="p-date" style="flex:1">Date<input id="p-date" type="date" value="2026-11-08"></label><label for="p-time" style="flex:1">Start time<input id="p-time" type="text" value="10:00 AM"></label></div>
+      <label for="p-pay">Pay (USD)<input id="p-pay" type="number" min="25" step="5" value="250"></label>
+      <div class="card" style="background:#000;padding:12px"><span class="small muted">Stage setup, filled from your account</span>${setupBadge('live')}</div>
+      <label for="p-songs">Required songs<textarea id="p-songs" placeholder="Paste one link or song title per line">Total Praise\nWay Maker</textarea></label>
+      <p id="p-err" class="small" style="color:var(--urgent)" hidden></p>
+      <button type="submit" class="btn btn-primary btn-block">Post engagement</button>
+    </form>`;
+}
+function screenMessages() {
+  const ts = threads();
+  return `<span class="gtitle" style="font-size:22px">Messages</span>
+    <div>${ts.map(t => `<button type="button" class="convo" data-action="thread" data-id="${t.id}">${avatar({ name: t.with, hue: t.hue }, 'round sm')}<span class="meta"><b>${esc(t.with)}</b><p>${esc(t.msgs[t.msgs.length - 1][1])}</p></span>${t.unread ? '<span class="unread" aria-label="Unread"></span>' : ''}</button>`).join('')}</div>`;
+}
+function screenThread(id) {
+  const t = threads().find(x => x.id === id); t.unread = false;
+  return `<div class="row"><button type="button" class="back" data-action="back">${svg('n-back', 'icon')}</button>${avatar({ name: t.with, hue: t.hue }, 'round sm')}<b>${esc(t.with)}</b></div>
+    <div class="thread">${t.msgs.map(([who, txt]) => `<div class="bubble ${who}">${esc(txt)}</div>`).join('')}</div>
+    <form class="composer" id="composer" data-id="${id}"><label class="sr" for="msg">Message</label><input id="msg" type="text" placeholder="Write a message" autocomplete="off"><button type="submit" class="btn btn-primary" aria-label="Send">${svg('n-send', 'icon')}</button></form>`;
+}
+function screenChurchProfile() {
+  return `<div class="profilehead">${avatar({ name: 'Shiloh Baptist', hue: 200 }, 'round lg')}
+      <div class="follow"><button type="button" class="btn btn-primary btn-sm" data-action="toast" data-msg="Profile editing isn't part of this prototype yet.">Edit profile</button></div>
+      <div class="gtitle" style="font-size:20px;margin-top:44px">Shiloh Baptist Church</div>
+      <p class="muted">Richmond, VA · Baptist · Services Sunday 10:00 AM, Wednesday 7:00 PM</p>
+      <div class="row between">${setupBadge('live')}<span class="badge-ok">Verified</span></div>
+      <p>${esc(SETUPS.live.desc)}</p></div>
+    <div class="card"><span class="label">Equipment on stage</span><div class="chips">${['Hammond B3', 'Acoustic drums', 'Wedges', 'House bass amp', 'Analog board', 'No click'].map(e => `<span class="chip">${e}</span>`).join('')}</div></div>
+    <div class="card"><span class="label">This year</span><dl class="kv"><dt>Bookings</dt><dd>23 completed</dd><dt>Musicians hired</dt><dd>9</dd><dt>Avg. pay</dt><dd>$265 per service</dd></dl></div>`;
+}
+
+
+/* ---------- custom dropdowns (native select kept hidden for its value) ---------- */
+let ddOpen = null;
+function closeDd() { if (!ddOpen) return; ddOpen.list.remove(); ddOpen.btn.setAttribute('aria-expanded', 'false'); ddOpen = null; }
+function ddLabel(sel) { const o = sel.options[sel.selectedIndex]; return !o || o.value === '' && o.textContent ? `<span class="ph">${esc(o ? o.textContent : '')}</span>` : `<span>${esc(o.textContent)}</span>`; }
+function enhanceSelects(root) {
+  root.querySelectorAll('select:not([data-dd-done])').forEach(sel => {
+    sel.dataset.ddDone = '1'; sel.classList.add('sr'); sel.tabIndex = -1;
+    const wrap = document.createElement('div'); wrap.className = 'dd' + (sel.id === 'f-distance' ? ' outline' : '');
+    const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'dd-btn'; btn.setAttribute('aria-haspopup', 'listbox'); btn.setAttribute('aria-expanded', 'false');
+    const lbl = sel.closest('label'); if (lbl) btn.setAttribute('aria-label', (lbl.firstChild && lbl.firstChild.textContent || '').trim());
+    const paint = () => { btn.innerHTML = ddLabel(sel) + svg('n-chev', 'icon'); };
+    paint(); sel.after(wrap); wrap.appendChild(btn);
+    btn.addEventListener('click', ev => {
+      ev.preventDefault(); ev.stopPropagation();
+      if (ddOpen && ddOpen.btn === btn) { closeDd(); return; }
+      closeDd();
+      const dev = $('#device').getBoundingClientRect(), r = btn.getBoundingClientRect();
+      const list = document.createElement('div'); list.className = 'dd-list'; list.setAttribute('role', 'listbox');
+      [...sel.options].filter(o => o.value !== '').forEach(o => {
+        const b = document.createElement('button'); b.type = 'button'; b.setAttribute('role', 'option'); b.setAttribute('aria-selected', o.selected); b.textContent = o.textContent;
+        b.addEventListener('click', e2 => { e2.stopPropagation(); sel.value = o.value; paint(); closeDd(); btn.focus(); sel.dispatchEvent(new Event('change', { bubbles: true })); sel.dispatchEvent(new Event('input', { bubbles: true })); });
+        list.appendChild(b);
+      });
+      list.style.left = (r.left - dev.left) + 'px'; list.style.width = r.width + 'px';
+      const below = dev.bottom - r.bottom - 80;
+      if (below < 160 && r.top - dev.top > below) list.style.bottom = (dev.bottom - r.top + 4) + 'px'; else list.style.top = (r.bottom - dev.top + 4) + 'px';
+      $('#device').appendChild(list); btn.setAttribute('aria-expanded', 'true'); ddOpen = { btn, list, at: Date.now() };
+      (list.querySelector('[aria-selected="true"]') || list.firstChild).focus({ preventScroll: true });
+    });
+  });
+}
+document.addEventListener('click', e => { if (ddOpen && !e.target.closest('.dd-list') && !ddOpen.btn.contains(e.target)) closeDd(); }, true);
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && ddOpen) { const b = ddOpen.btn; closeDd(); b.focus(); } });
+document.addEventListener('scroll', e => { if (ddOpen && Date.now() - ddOpen.at > 250 && !(e.target.closest && e.target.closest('.dd-list'))) closeDd(); }, true);
+
+
+/* ---------- sign up + questionnaires ---------- */
+const Q_MUSICIAN = [
+  { sec: 'Technical Proficiency & Theory', items: [
+    { q: 'Can you transpose songs seamlessly on the spot into all 12 keys?', t: 'radio', o: ['No, basic keys only', 'Yes, with a chart', 'Yes, by ear instantly'] },
+    { q: 'How would you rate your chart/notation reading? Select all that applies.', t: 'check', o: ['Play exclusively by ear', 'Nashville Numbers', 'Chord charts & lead sheets', 'Standard notation sight-reading'] },
+    { q: 'What is your primary vocal role and comfort level with harmonies?', t: 'check', o: ['Lead only', 'Strong lead with basic backing', 'Proficient backing harmonies', 'Can arrange and teach multi-part vocal stacks on the spot'] } ] },
+  { sec: 'Live Performance & Production Tech', items: [
+    { q: 'What is your experience performing with click tracks, stems, and multi-tracks?', t: 'radio', o: ['Never used', 'Rehearsal only', 'Comfortable live with click', 'Highly proficient'] },
+    { q: 'What is your familiarity with In-Ear Monitors (IEMs) and stage routing?', t: 'radio', o: ['Prefer floor monitors', 'Comfortable with basic stereo/mono IEMs', 'Fully equipped with custom molds and wireless transmitter pack'] },
+    { q: 'Do you own your own in-ear monitors?', t: 'radio', o: ['Yes', 'No'] } ] },
+  { sec: 'Band Leadership & MD Capabilities', items: [
+    { q: 'Have you served as a Music Director (MD), and at what level?', t: 'radio', o: ['Never', 'Local band or community church', 'Large church/regional touring act', 'Major label or nationally touring artist'] },
+    { q: 'What band-leading duties have you actively handled?', t: 'check', o: ['Rehearsal management & calling transitions on talkback mic', 'Writing/arranging charts and chord sheets', 'Programming playback stems and click tracks', 'Hiring and managing sub musicians'] } ] },
+  { sec: 'Verified Credits & Working History', items: [
+    { q: 'What is the highest level you have toured or performed at?', t: 'radio', o: ['Local gigs/events', 'Regional touring', 'National/International support act', 'Major headline tour or broadcast/session television'] },
+    { q: 'Have you recorded on commercially released projects?', t: 'radio', o: ['Home studio', 'Local artists', 'Independent label', 'Major label or nationally recognized release'] },
+    { q: 'Please provide a link to your EPK, portfolio, or live performance reel.', t: 'links' } ] }
+];
+const Q_CHURCH = [
+  { sec: 'Stage & House Gear (“What we have”)', items: [
+    { text: 'Not sure what equipment you have? Snap 3 clear photos of your stage: the drum area, the sound booth/mixing board, and the keyboard/amplifier area. An optional admin tag allows musicians to inspect the board or drum kit before accepting the booking.' },
+    { uploads: ['Upload your drum area photo here...', 'Upload your soundboard photo here...', 'Upload your keyboard area photo here...'] },
+    { sub: 'Keys & Synthesizers' },
+    { q: 'Do you have an in-house keyboard/organ?', t: 'check', o: ['Hammond B3/Leslie', 'Weighted 88-key stage piano', 'Basic upright acoustic', 'No keyboard / Musician must bring own rig'] },
+    { q: 'Does your keyboardist need to supply their own stand, sustain pedal, and DI box?', t: 'radio', o: ['Yes', 'No'] },
+    { sub: 'Drums & Percussion' },
+    { q: 'What drum setup is available?', t: 'check', o: ['Full acoustic kit with cymbals', 'Acoustic shells only / Bring your own breakables', 'Electronic V-Drums kit', 'No drum kit'] },
+    { sub: 'Bass/Guitar' },
+    { q: 'What bass/guitar setup is available?', t: 'check', o: ['Amp/cabinet', 'Guitar combo amp', 'Direct Box only'] } ] },
+  { sec: 'Audio & Monitoring Environment', items: [
+    { q: 'What type of stage monitoring is provided for the band?', t: 'radio', o: ['Floor monitor wedges only', 'Wired In-Ear Monitors (IEMs) — 3.5mm headphone jacks at stage drops', 'Wireless In-Ear Monitors (transmitters provided)', 'None / Musicians must supply their own amplification/monitoring'] },
+    { q: 'How are monitor mixes controlled?', t: 'radio', o: ['Front of House (FOH) engineer handles stage mixes', 'Personal mixer units on stage', 'Personal smartphone/tablet app'] },
+    { q: 'Does your team run a Click Track or Backing Stems during service/events?', t: 'radio', o: ['Yes, full multi-tracks and click', 'Click track only', 'No, we play free/live tempo'] } ] },
+  { sec: 'Service Flow & Preparation Standards', items: [
+    { q: 'When will materials (setlist, charts, keys) be provided?', t: 'radio', o: ['At least 5–7 days prior', '24–48 hours prior', 'Provided on stage morning-of'] },
+    { q: 'What chart format does your music director or team use?', t: 'radio', o: ['Planning Center Online / Chartbuilder', 'Standard chord charts / lyric sheets', 'Nashville Number System', 'Traditional sheet music / hymn books', 'Strictly by ear / reference recordings'] },
+    { q: 'Is there a soundcheck or rehearsal before the service/event?', t: 'radio', o: ['Dedicated mid-week rehearsal required', 'Morning-of soundcheck only', 'Downbeat line-check only (none)'] } ] }
+];
+function screenSignup() {
+  const su = S.signup, church = su.type === 'church';
+  const field = (id, label, type = 'text') => `<label class="su-field" for="${id}">${label}<input id="${id}" type="${type}" autocomplete="off"></label>`;
+  return `<form class="su-card" id="signupform" novalidate>
+    <h2>Sign up</h2>
+    <div class="su-group pad"><span class="su-h" id="su-type-l">What type of account?</span>
+      <select id="su-type" aria-labelledby="su-type-l"><option value="musician" ${!church ? 'selected' : ''}>Musician</option><option value="church" ${church ? 'selected' : ''}>Church/Establishment</option></select></div>
+    <div class="su-group pad" id="su-musician" ${church ? 'hidden' : ''}><span class="su-h">Are you a musician or singer?</span>
+      <div class="su-toggle" role="group" aria-label="Musician or singer"><button type="button" id="su-k-m" data-action="su-kind" data-v="musician" aria-pressed="${su.kind === 'musician'}">Musician</button><button type="button" id="su-k-s" data-action="su-kind" data-v="singer" aria-pressed="${su.kind === 'singer'}">Singer</button></div>
+      <div id="su-inst-wrap" ${su.kind === 'singer' ? 'hidden' : ''}><select id="su-inst" aria-label="Instrument"><option value="">Choose an instrument</option>${INSTRUMENTS.filter(i => i !== 'Singer').map(i => `<option>${esc(i)}</option>`).join('')}</select></div>
+      <div id="su-voice-wrap" ${su.kind === 'singer' ? '' : 'hidden'}><select id="su-voice" aria-label="Voice part"><option value="">Choose your voice part</option><option>Soprano</option><option>Alto</option><option>Tenor</option><option>Baritone/Bass</option></select></div></div>
+    <div class="su-group" id="su-church" ${church ? '' : 'hidden'}><span class="su-h">Church Information</span>${field('su-cname', 'Church/Establishment Name')}${field('su-denom', 'Denomination')}</div>
+    <div class="su-group"><span class="su-h">Personal Information</span>${field('su-user', 'Username')}${field('su-first', 'First Name')}${field('su-last', 'Last Name')}${field('su-addr', 'Address')}${field('su-city', 'City')}${field('su-state', 'State')}${field('su-zip', 'Zip')}</div>
+    <div class="su-group" id="su-mem" style="padding-bottom:16px" ${church ? 'hidden' : ''}><span class="su-h" id="su-mem-l">Choose your membership</span>
+      <select id="su-plan" aria-labelledby="su-mem-l"><option value="">Choose your desired membership</option><option value="Standard" ${su.plan === 'Standard' ? 'selected' : ''}>Standard</option><option value="VIP" ${su.plan === 'VIP' ? 'selected' : ''}>VIP</option></select></div>
+    <div class="su-group"><span class="su-h">Bank Information</span>${field('su-bank', 'Bank Name')}${field('su-routing', 'Routing Number')}${field('su-acct', 'Account No.')}${field('su-baddr', 'Address')}${field('su-bcity', 'City')}${field('su-bstate', 'State')}${field('su-bzip', 'Zip')}</div>
+    <p class="su-err" id="su-err" hidden></p>
+    <button type="submit" class="su-btn">Continue to questionnaire</button>
+  </form>`;
+}
+function screenQuestionnaire(kind) {
+  const data = kind === 'church' ? Q_CHURCH : Q_MUSICIAN; let n = 0;
+  const item = it => {
+    if (it.text) return `<p class="q-text">${esc(it.text)}</p>`;
+    if (it.sub) return `<p class="q-sub">${esc(it.sub)}</p>`;
+    if (it.uploads) return `<div style="display:flex;flex-direction:column;gap:16px">${it.uploads.map((u, i) => `<label class="q-upload"><span>${esc(u)}</span>${svg('n-upload', 'icon')}<input type="file" accept="image/*" data-up="1" aria-label="${esc(u.replace('...', ''))}"></label>`).join('')}</div>`;
+    if (it.t === 'links') return `<div class="q" style="gap:16px"><p class="q-text">${esc(it.q)}</p><div id="q-links" style="display:flex;flex-direction:column;gap:12px"><input class="q-link" type="url" placeholder="Paste your link here..." aria-label="Link"></div><button type="button" class="q-add" data-action="add-link">${svg('n-addc', 'icon')}ADD LINK</button></div>`;
+    const name = 'q' + (n++);
+    return `<fieldset class="q"><legend>${esc(it.q)}</legend><div class="q-opts">${it.o.map((o, i) => `<label class="q-opt"><input type="${it.t === 'check' ? 'checkbox' : 'radio'}" name="${name}" value="${i}">${esc(o)}</label>`).join('')}</div></fieldset>`;
+  };
+  return `<form class="q-page" id="qform" data-kind="${kind}" novalidate>
+    <h2 class="q-title">${kind === 'church' ? 'Church and Client Questionnaire' : 'Musician Questionnaire'}</h2>
+    ${data.map(sec => `<h3 class="q-sec">${esc(sec.sec)}</h3>${sec.items.map(item).join('')}`).join('')}
+    <button type="submit" class="su-btn">Submit questionnaire</button>
+  </form>`;
+}
+function startSignup(plan) {
+  setView('app'); S.role = 'musician'; S.signup = { type: 'musician', kind: 'musician', plan: plan || '' };
+  $('#role-musician').setAttribute('aria-pressed', true); $('#role-church').setAttribute('aria-pressed', false);
+  S.tab = 'profile'; S.stack = [{ screen: 'signup' }]; S.menu = false; S.modal = null; render(); $('#screen').scrollTop = 0;
+}
+
+/* ---------- APP RENDER ---------- */
+const TABS = [['home', 'n-home', 'Home'], ['search', 'n-search', 'Search'], ['calendar', 'n-cal', 'Gigs'], ['messages', 'n-msg', 'Messages'], ['profile', 'n-user', 'Profile']];
+function render() {
+  const c = cur();
+  const scr = $('#screen');
+  scr.classList.toggle('flush', c.screen === 'search');
+  scr.classList.toggle('home', c.screen === 'home');
+  const map = { home: screenHome, search: screenSearch, calendar: screenCalendar, messages: screenMessages,
+    profile: () => S.role === 'church' ? screenChurchProfile() : screenProfile('me'),
+    gig: () => screenGig(c.id), musician: () => screenProfile(c.id), ratings: () => screenRatings(c.id), applicants: () => screenApplicants(c.id), newposting: screenNewPosting, thread: () => screenThread(c.id), signup: screenSignup, qmusician: () => screenQuestionnaire('musician'), qchurch: () => screenQuestionnaire('church') };
+  scr.innerHTML = map[c.screen]();
+  const unread = threads().filter(t => t.unread).length;
+  closeDd(); enhanceSelects(scr);
+  $('#tabbar').innerHTML = TABS.map(([k, ic, lbl]) => `<button type="button" data-action="tab" data-tab="${k}" aria-label="${lbl}" ${S.tab === k ? 'aria-current="page"' : ''}><span class="${k === 'messages' && unread ? 'dot' : ''}" data-count="${unread}" style="display:grid">${svg(ic)}</span></button>`).join('');
+  renderOverlay();
+}
+function renderOverlay() {
+  let h = '';
+  if (S.menu) h += `<div class="menu" data-action="menu-close"><div data-stop="1"><span class="logo" style="font-size:20px;margin-bottom:12px">YEA DOC</span>
+    <p class="muted small" style="margin-bottom:8px">Signed in as ${S.role === 'musician' ? 'JKey88 (musician)' : 'Shiloh Baptist (church)'}</p>
+    <button type="button" class="item" data-action="role" data-role="${S.role === 'musician' ? 'church' : 'musician'}">Switch to ${S.role === 'musician' ? 'church' : 'musician'} view</button>
+    <button type="button" class="item" data-action="tab" data-tab="calendar">${S.role === 'musician' ? 'My schedule' : 'My postings'}</button>
+    <button type="button" class="item" data-action="toast" data-msg="Settings aren't part of this prototype yet.">Settings</button>
+    <button type="button" class="item" data-action="view" data-view="site">Back to website</button></div></div>`;
+  if (S.modal) h += S.modal;
+  if (S.toast) h += `<div class="toast" role="status">${esc(S.toast)}</div>`;
+  $('#overlay').innerHTML = h;
+}
+function setRole(r) {
+  S.role = r; S.search.mode = r === 'church' ? 'musician' : 'engagement';
+  S.search.instruments.clear(); S.search.tiers.clear(); S.search.genres.clear();
+  $('#role-musician').setAttribute('aria-pressed', r === 'musician'); $('#role-church').setAttribute('aria-pressed', r === 'church');
+  setTab('home');
+}
+function setView(v) {
+  $('#view-site').hidden = v !== 'site'; $('#view-app').hidden = v !== 'app';
+  $('#sw-site').setAttribute('aria-pressed', v === 'site'); $('#sw-app').setAttribute('aria-pressed', v === 'app');
+  S.menu = false; store.set('yd-view', v); window.scrollTo(0, 0); if (v === 'app') render();
+}
+function openThreadWith(name, hue) {
+  let t = threads().find(x => x.with === name);
+  if (!t) { t = { id: 'n' + Date.now(), with: name, hue: +hue || 200, unread: false, msgs: [] }; threads().unshift(t); }
+  S.tab = 'messages'; S.stack = [{ screen: 'thread', id: t.id }]; S.modal = null; render();
+}
+function toggleSet(set, v) { set.has(v) ? set.delete(v) : set.add(v); }
+
+/* ---------- events ---------- */
+document.addEventListener('click', e => {
+  if (S.rt && S.rt.sortOpen && !e.target.closest('.rt-sort')) { S.rt.sortOpen = false; render(); }
+  const el = e.target.closest('[data-action]');
+  if (!el) return;
+  const a = el.dataset.action, d = el.dataset;
+  if (el.tagName === 'A' && a === 'persp') { site.side = d.side; renderPersp(); return; }
+  switch (a) {
+    case 'view': setView(d.view); break;
+    case 'persp': site.side = d.side; renderPersp(); break;
+    case 'faq': site.faq = d.cat; renderFaq(); break;
+    case 'open-app': if (d.role === 'musician') { startSignup(d.plan); break; } setView('app'); setRole(d.role); if (d.role === 'church') setTab('search'); break;
+    case 'su-kind': S.signup.kind = d.v; $('#su-k-m').setAttribute('aria-pressed', d.v === 'musician'); $('#su-k-s').setAttribute('aria-pressed', d.v === 'singer'); $('#su-inst-wrap').hidden = d.v === 'singer'; $('#su-voice-wrap').hidden = d.v !== 'singer'; break;
+    case 'add-link': { const box = $('#q-links'); const inp = document.createElement('input'); inp.className = 'q-link'; inp.type = 'url'; inp.placeholder = 'Paste your link here...'; inp.setAttribute('aria-label', 'Link'); box.appendChild(inp); inp.focus(); break; }
+    case 'role': setRole(d.role); break;
+    case 'homever': S.homeVersion = d.v; $('#hv-gigs').setAttribute('aria-pressed', d.v === 'gigs'); $('#hv-search').setAttribute('aria-pressed', d.v === 'search'); if (S.role !== 'musician') setRole('musician'); else setTab('home'); break;
+    case 'tab': setTab(d.tab); break;
+    case 'menu': S.menu = true; renderOverlay(); break;
+    case 'menu-close': if (e.target === el) { S.menu = false; renderOverlay(); } break;
+    case 'filter': if (cur().screen !== 'search') { setTab('search'); S.showFilter = true; render(); } else { S.showFilter = !S.showFilter; render(); } break;
+    case 'mode': S.search.mode = d.mode; S.search.tiers.clear(); S.search.genres.clear(); render(); break;
+    case 'f-inst': toggleSet(S.search.instruments, d.v); render(); break;
+    case 'f-tier': toggleSet(S.search.tiers, d.v); render(); break;
+    case 'f-genre': toggleSet(S.search.genres, d.v); render(); break;
+    case 'sheet': S.sheetCollapsed = !S.sheetCollapsed; render(); break;
+    case 'recent': S.tab = 'search'; S.stack = []; S.search.mode = 'engagement'; S.search.instruments = new Set(['Keyboard/Organ']); S.showFilter = false; S.sheetCollapsed = false; render(); break;
+    case 'gig': if (e.target.closest('button[data-action="apply"]')) break; go('gig', { id: d.id }); break;
+    case 'booking': go('gig', { id: d.id }); break;
+    case 'setlist': { const b = MY_BOOKINGS.find(x => x.id === d.id); S.modal = `<div class="modal" data-action="modal-close"><div data-stop="1"><div class="row between"><span class="gtitle">Setlist · ${esc(b.title)}</span><button type="button" class="iconbtn" data-action="modal-x" aria-label="Close">${svg('n-x')}</button></div><p class="muted small">${fmtDate(b.date)} · ${esc(CHURCHES[b.church].name)}</p>${b.songs.map((s, i) => `<div class="opt"><span>${i + 1}. ${esc(s)}</span><span class="muted small">Link</span></div>`).join('')}</div></div>`; renderOverlay(); break; }
+    case 'apply': e.stopPropagation(); S.applied.add(d.id); toast('Application sent. The church will confirm in the app.'); render(); break;
+    case 'profile': go('musician', { id: d.id }); break;
+    case 'follow': toggleSet(S.following, d.id); render(); break;
+    case 'church-pin': { const c = CHURCHES[d.id]; S.search.q = c.name; S.sheetCollapsed = false; render(); break; }
+    case 'message': openThreadWith(d.name, d.hue); break;
+    case 'thread': go('thread', { id: d.id }); break;
+    case 'request': { const m = MUSICIANS.find(x => x.id === d.id); const posts = S.myPostings.map(p => GIGS.find(g => g.id === p.id));
+      S.modal = `<div class="modal" data-action="modal-close"><div data-stop="1"><div class="row between"><span class="gtitle">Request ${esc(m.name)}</span><button type="button" class="iconbtn" data-action="modal-x" aria-label="Close">${svg('n-x')}</button></div><p class="muted small">Choose which engagement to invite them to.</p>${posts.map(g => `<button type="button" class="opt" data-action="request-pick" data-id="${m.id}" data-gig="${g.id}"><span><b>${esc(g.title)}</b><br><span class="muted small">${fmtDate(g.date)} · ${esc(g.instrument)}</span></span><b>$${g.pay}</b></button>`).join('')}<button type="button" class="btn btn-ghost" data-action="new-posting">Create a new posting</button></div></div>`; renderOverlay(); break; }
+    case 'request-pick': { const m = MUSICIANS.find(x => x.id === d.id), g = GIGS.find(x => x.id === d.gig); S.requested[d.id] = d.gig; S.modal = null; toast(`Request sent to ${m.name} for ${g.title}.`); render(); break; }
+    case 'modal-close': if (e.target === el) { S.modal = null; renderOverlay(); } break;
+    case 'modal-x': S.modal = null; renderOverlay(); break;
+    case 'applicants': go('applicants', { id: d.id }); break;
+    case 'new-posting': S.modal = null; if (S.role !== 'church') { toast('Switch to the church view to post a gig.'); break; } go('newposting'); break;
+    case 'ratings': S.rt = null; go('ratings', { id: d.id }); break;
+    case 'rt-filter': S.rt.filter = S.rt.filter === +d.s ? null : +d.s; S.rt.shown = 10; S.rt.sortOpen = false; render(); break;
+    case 'rt-sort': S.rt.sortOpen = !S.rt.sortOpen; render(); if (S.rt.sortOpen) { const b = document.querySelector('.rt-menu [aria-selected="true"]'); if (b) b.focus({ preventScroll: true }); } break;
+    case 'rt-sort-pick': S.rt.sort = d.k; S.rt.sortOpen = false; render(); { const b = document.querySelector('.rt-sortbtn'); if (b) b.focus({ preventScroll: true }); } break;
+    case 'rt-more': { const i = +d.i; S.rt.expanded.has(i) ? S.rt.expanded.delete(i) : S.rt.expanded.add(i); $('#rt-list').innerHTML = rtListHtml(); break; }
+    case 'rt-load': S.rt.shown += 10; $('#rt-list').innerHTML = rtListHtml(); break;
+    case 'back': back(); break;
+    case 'toast': toast(d.msg); break;
+  }
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && S.rt && S.rt.sortOpen) { S.rt.sortOpen = false; render(); const b = document.querySelector('.rt-sortbtn'); if (b) b.focus(); return; } if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('article[data-action]')) { e.preventDefault(); e.target.click(); } if (e.key === 'Escape' && (S.modal || S.menu)) { S.modal = null; S.menu = false; renderOverlay(); } });
+document.addEventListener('input', e => {
+  if (e.target.id === 'rt-q') { S.rt.q = e.target.value; S.rt.shown = 10; $('#rt-list').innerHTML = rtListHtml(); return; }
+  if (e.target.id === 'q') { S.search.q = e.target.value; const pos = e.target.selectionStart; render(); const q = $('#q'); q.focus(); q.setSelectionRange(pos, pos); }
+});
+document.addEventListener('change', e => {
+  if (e.target.id === 'su-type') { const ch = e.target.value === 'church'; S.signup.type = e.target.value; $('#su-musician').hidden = ch; $('#su-mem').hidden = ch; $('#su-church').hidden = !ch; }
+  if (e.target.dataset && e.target.dataset.up) { const lab = e.target.closest('.q-upload'); const f = e.target.files && e.target.files[0]; if (f) { lab.classList.add('has-file'); lab.querySelector('span').textContent = f.name; } }
+  if (e.target.id === 'f-distance') { S.search.distance = +e.target.value; render(); }
+  if (e.target.id === 'f-urgent') { S.search.urgentOnly = e.target.checked; render(); }
+});
+document.addEventListener('submit', e => {
+  e.preventDefault();
+  if (e.target.id === 'composer') { const inp = $('#msg'); const v = inp.value.trim(); if (!v) return; const t = threads().find(x => x.id === e.target.dataset.id); t.msgs.push(['me', v]); render(); $('#msg').focus(); const s = $('#screen'); s.scrollTop = s.scrollHeight; return; }
+  if (e.target.id === 'signupform') {
+    const err = $('#su-err'), ch = $('#su-type').value === 'church';
+    const need = [['su-user', 'a username'], ['su-first', 'your first name'], ['su-last', 'your last name']];
+    if (ch) need.unshift(['su-cname', 'your church or establishment name']);
+    const miss = need.find(([id]) => !$('#' + id).value.trim());
+    if (miss) { err.textContent = `Enter ${miss[1]} to continue.`; err.hidden = false; $('#' + miss[0]).focus(); return; }
+    S.stack.push({ screen: ch ? 'qchurch' : 'qmusician' }); render(); $('#screen').scrollTop = 0; return;
+  }
+  if (e.target.id === 'qform') {
+    const ch = e.target.dataset.kind === 'church';
+    S.stack = []; setRole(ch ? 'church' : 'musician');
+    toast(ch ? 'Thanks! We\u2019ll verify your stage photos and confirm your setup.' : 'Questionnaire sent. Next, upload your audition videos for review.');
+    return;
+  }
+  if (e.target.id === 'homesearch') { const v = $('#hs-q').value.trim(); S.tab = 'search'; S.stack = []; S.search.mode = 'engagement'; S.search.q = v; S.showFilter = false; S.sheetCollapsed = false; render(); return; }
+  if (e.target.id === 'postform') {
+    const inst = $('#p-inst').value, name = $('#p-name').value.trim(), err = $('#p-err');
+    if (!inst || !name) { err.textContent = !inst ? 'Choose an instrument so we can match the right musicians.' : 'Give the event a name so musicians know what it is.'; err.hidden = false; return; }
+    const date = $('#p-date').value || '2026-11-08';
+    const g = { id: 'g' + Date.now(), title: name, time: $('#p-time').value || '10:00 AM', date, church: 'shiloh', instrument: inst, tier: $('#p-tier').value, pay: Math.max(25, +$('#p-pay').value || 0), urgent: e.target.urgent.value === 'yes', genres: ['Traditional Gospel'], songs: $('#p-songs').value.split('\n').map(s => s.trim()).filter(Boolean) };
+    if (!g.songs.length) g.songs = ['Setlist coming soon'];
+    GIGS.unshift(g); S.myPostings.unshift({ id: g.id, applicants: [] });
+    toast(`Posted. ${g.urgent ? 'Urgent postings reach VIP musicians first.' : 'Musicians can apply now.'}`);
+    setTab('calendar');
+  }
+});
+document.addEventListener('input', e => { if (e.target.closest && e.target.closest('#signupform')) { const er = $('#su-err'); if (er) er.hidden = true; } if (e.target.id === 'p-inst' || e.target.id === 'p-name') { const er = $('#p-err'); if (er) er.hidden = true; } });
+
+renderPersp(); renderHow(); renderFaq(); fillFig(document); fitCanvas();
+if (location.hash === '#app' || store.get('yd-view') === 'app') setView('app');
+})();
+</script>
+
+</body></html>
